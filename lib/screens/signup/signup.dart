@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoes_app_ui/auth/signup_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
@@ -9,6 +12,16 @@ import 'package:shoes_app_ui/controller/signup_controller.dart';
 class Signup extends StatelessWidget {
   Signup({super.key});
   SignupController getController = SignupController();
+  File? profileImage;
+  pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      profileImage = File(image.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,6 +100,18 @@ class Signup extends StatelessWidget {
               child: Container(
                 child: Column(
                   children: [
+                    GestureDetector(
+                      onTap: pickImage,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: profileImage != null
+                            ? FileImage(profileImage!)
+                            : null,
+                        child: profileImage == null
+                            ? Icon(Icons.camera_alt, size: 50)
+                            : null,
+                      ),
+                    ),
                     CustomInputField(
                       controller: getController.userNameController,
                       hintText: "Enter username",

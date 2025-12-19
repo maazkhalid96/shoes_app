@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
@@ -55,7 +54,7 @@ class _AddProductState extends State<AddProduct> {
     try {
       await FirebaseFirestore.instance.collection("products").add({
         "name": getController.productName.text,
-        "price": getController.price.text,
+        "price": int.parse(getController.price.text),
         "category": getController.category.text,
         "description": getController.description.text,
         "image": imageFilee!.path,

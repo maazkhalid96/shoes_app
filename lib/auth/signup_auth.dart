@@ -42,12 +42,13 @@ class SignupAuth {
       return;
     }
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final res = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      String imageUrl = await (res.user!.uid);
 
-      firestore.collection("users").add({
+      firestore.collection("users").doc(res.user?.uid).set({
         "email": email,
         "phone": phone,
         "username": username,

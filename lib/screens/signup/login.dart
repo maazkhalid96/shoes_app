@@ -6,8 +6,14 @@ import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/controller.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
    Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   LoginController getController = LoginController();
 
   @override

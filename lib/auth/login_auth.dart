@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/screens/home/admin/admin_dashboard.dart';
@@ -21,35 +20,31 @@ class LoginAuth {
       );
       return;
     }
-    
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final res = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-
+      print('login dataaaaaa: ${res.user?.uid}');
       if (email == "maaz@gmail.com") {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AdminDashboard()),
-      );
-    }else{
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Home()),
-      );
-
-    }
-    
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AdminDashboard()),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      }
 
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Login Successful!")));
-      
+
       emailController.clear();
       passwordController.clear();
-      
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');

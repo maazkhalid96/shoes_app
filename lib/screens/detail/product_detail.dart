@@ -1,12 +1,41 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 
 class ProductDetail extends StatelessWidget {
   final Map product;
-  const ProductDetail({super.key, required this.product});
 
+  ProductDetail({super.key, required this.product});
+
+  User? user = FirebaseAuth.instance.currentUser;
+
+  carts(BuildContext context) async {
+    try {
+      
+      await FirebaseFirestore.instance
+          .collection("carts")
+          .doc(user?.uid)
+          .collection("items")
+          .add({
+            "name": product["name"],
+            "price": product["price"],
+            "desc": product["description"],
+            "image": product['image'],
+            "quantity" :1 ,
+            "totalPrice" : int.parse(product["price"].toString())
+          });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("added to carts Successfully")));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,9 +67,9 @@ class ProductDetail extends StatelessWidget {
                   product["name"],
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
-            
+
                 SizedBox(height: 10),
-            
+
                 //  Price
                 Text(
                   "Rs.${product["price"]}",
@@ -50,9 +79,9 @@ class ProductDetail extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-            
+
                 SizedBox(height: 20),
-            
+
                 //  Description
                 Text(
                   product["description"],
@@ -67,9 +96,12 @@ class ProductDetail extends StatelessWidget {
           ),
           SizedBox(height: 30),
           Spacer(),
-          CustomButton(text: "Add to Cart", onPressed: () {
-            
-          }),
+          CustomButton(
+            text: "Add to Cart",
+            onPressed: () {
+              carts(context);
+            },
+          ),
         ],
       ),
     );

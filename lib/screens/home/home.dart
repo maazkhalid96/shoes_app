@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/slider_banner.dart';
+import 'package:shoes_app_ui/screens/carts/carts_data.dart';
 import 'package:shoes_app_ui/screens/detail/product_detail.dart';
+import 'package:shoes_app_ui/screens/profile/profile.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -12,38 +14,94 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+PageController pageController = PageController();
+int currentPage = 0;
+
 class _HomeState extends State<Home> {
-  PageController pageController = PageController();
-  int currentPage = 0;
-  @override
+
+  // Get current user
+  // User? currentUser = FirebaseAuth.instance.currentUser;
+
+  // ---------------- FAV FUNCTION ----------------
+  // Future<void> handelFav(Map product) async {
+  //   if (currentUser == null) return; // agar user null ho to exit
+  //   final docRef = _firestore
+  //       .collection("favorites")
+  //       .doc(currentUser!.uid)
+  //       .collection("items")
+  //       .doc(product["id"]); // product id as doc id
+
+  //   final doc = await docRef.get();
+
+  //   if (doc.exists) {
+  //     // agar already favorite hai → remove karo
+  //     await docRef.delete();
+  //   } else {
+  //     // nahi hai → add karo
+  //     await docRef.set({
+  //       "name": product["name"],
+  //       "price": product["price"],
+  //       "image": product["image"],
+  //       "desc": product["desc"] ?? "",
+  //       "addedAt": FieldValue.serverTimestamp(),
+  //     });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => Profile()),
+              );
+            },
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(
+                'https://tse1.mm.bing.net/th/id/OIP.CIN13u4y3HNeUOEZZo-wNgHaFj?pid=Api&P=0&h=220',
+              ),
+            ),
+          ),
+        ),
         title: Center(
           child: Text(
             "Shoes Shop",
             style: TextStyle(
               fontSize: 35,
-              fontWeight: FontWeight.bold, // Bold text
-              color: Colors.blueAccent, // Text color
-              letterSpacing: 2, // Letters ke beech spacing
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+              letterSpacing: 2,
               shadows: [
                 Shadow(
                   color: Colors.grey.withOpacity(0.5),
                   offset: Offset(2, 2),
                   blurRadius: 3,
                 ),
-              ], // Thoda shadow effect
+              ],
             ),
           ),
         ),
-
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartsData()),
+              );
+            },
+            icon: Icon(Icons.shopping_cart),
+          ),
         ],
       ),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -54,9 +112,7 @@ class _HomeState extends State<Home> {
                   fillColor: const Color.fromARGB(255, 245, 230, 230),
                   hintText: "Search shoes",
                   filled: true,
-
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
-
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
                     borderSide: BorderSide.none,
@@ -86,8 +142,6 @@ class _HomeState extends State<Home> {
                         callback: () {},
                       ),
                     ),
-
-                    // SizedBox(width: 15),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: SliderBanner(
@@ -98,7 +152,6 @@ class _HomeState extends State<Home> {
                         callback: () {},
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: SliderBanner(
@@ -112,6 +165,7 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
+
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -127,6 +181,7 @@ class _HomeState extends State<Home> {
                   );
                 }),
               ),
+
               SizedBox(height: 20),
               StreamBuilder(
                 stream: FirebaseFirestore.instance
@@ -153,6 +208,8 @@ class _HomeState extends State<Home> {
                     itemCount: product.length,
                     itemBuilder: (context, index) {
                       var data = product[index].data();
+                      data["id"] = product[index].id;
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -172,7 +229,6 @@ class _HomeState extends State<Home> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // ---------- IMAGE ----------
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.vertical(
@@ -191,10 +247,7 @@ class _HomeState extends State<Home> {
                                         ),
                                 ),
                               ),
-
                               SizedBox(height: 10),
-
-                              // ---------- NAME ----------
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Text(
@@ -208,10 +261,7 @@ class _HomeState extends State<Home> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-
                               SizedBox(height: 6),
-
-                              // ---------- PRICE ----------
                               Padding(
                                 padding: EdgeInsets.only(bottom: 12),
                                 child: Container(
@@ -231,6 +281,32 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
+
+                              SizedBox(height: 10),
+                              // IconButton(
+                              //   onPressed: () {
+                              //     handelFav(data);
+                              //   },
+                              //   icon: StreamBuilder<DocumentSnapshot>(
+                              //     stream: FirebaseFirestore.instance
+                              //         .collection("favorites")
+                              //         .doc(currentUser?.uid)
+                              //         .collection("items")
+                              //         .doc(data["id"])
+                              //         .snapshots(),
+                              //     builder: (context, snapshot) {
+                              //       if (snapshot.hasData &&
+                              //           snapshot.data!.exists) {
+                              //         return Icon(
+                              //           Icons.favorite,
+                              //           color: Colors.red,
+                              //         );
+                              //       } else {
+                              //         return Icon(Icons.favorite_border);
+                              //       }
+                              //     },
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
