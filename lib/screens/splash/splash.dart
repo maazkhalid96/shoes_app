@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shoes_app_ui/screens/home/home.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

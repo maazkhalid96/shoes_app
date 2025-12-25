@@ -9,16 +9,28 @@ import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/signup_controller.dart';
 
-class Signup extends StatelessWidget {
-  Signup({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   SignupController getController = SignupController();
+
+  bool isLoading = false;
+
   File? profileImage;
+
   pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      profileImage = File(image.path);
+      setState(() {
+        profileImage = File(image.path);
+      });
     }
   }
 
@@ -122,7 +134,10 @@ class Signup extends StatelessWidget {
                       hintText: "Enter phone",
                       prefixIcon: Icons.phone_android,
                       textInputType: TextInputType.phone,
-                      inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+                      inputFormatter: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(11),
+                      ],
                     ),
                     CustomInputField(
                       controller: getController.emailController,
@@ -136,22 +151,35 @@ class Signup extends StatelessWidget {
                       prefixIcon: Icons.remove_red_eye,
                     ),
                     SizedBox(height: 35),
-                    CustomButton(
-                      text: "Sign up",
-                      onPressed: () {
-                        SignupAuth().signUp(
-                          email: getController.emailController.text,
-                          password: getController.passwordController.text,
-                          username: getController.userNameController.text,
-                          phone: getController.phoneController.text,
-                          emailController: getController.emailController,
-                          userNameController: getController.userNameController,
-                          passwordController: getController.passwordController,
-                          phoneController: getController.phoneController,
-                          context: context,
-                        );
-                      },
-                    ),
+                    isLoading
+                        ? CircularProgressIndicator()
+                        : CustomButton(
+                            text: "Sign up",
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              await SignupAuth().signUp(
+                                email: getController.emailController.text,
+                                password: getController.passwordController.text,
+                                username: getController.userNameController.text,
+                                phone: getController.phoneController.text,
+                                emailController: getController.emailController,
+                                userNameController:
+                                    getController.userNameController,
+                                passwordController:
+                                    getController.passwordController,
+                                phoneController: getController.phoneController,
+                                imagePath: profileImage?.path,
+                                context: context,
+                              );
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
+                          ),
+                          
                   ],
                 ),
               ),

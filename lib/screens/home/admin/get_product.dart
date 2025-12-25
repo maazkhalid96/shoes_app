@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class GetProduct extends StatelessWidget {
   const GetProduct({super.key});
@@ -60,7 +59,7 @@ class GetProduct extends StatelessWidget {
 
                     SizedBox(height: 6),
 
-                    // ---------- PRODUCT NAME ----------
+                    // ---------- PRODUCT NAME ---- ------
                     Text(
                       product["name"],
                       style: TextStyle(
@@ -97,7 +96,7 @@ class GetProduct extends StatelessWidget {
                                     );
                                 TextEditingController priceController =
                                     TextEditingController(
-                                      text: product["price"],
+                                      text: product["price"].toString(),
                                     );
                                 TextEditingController categoryController =
                                     TextEditingController(
@@ -121,7 +120,7 @@ class GetProduct extends StatelessWidget {
                                         ),
                                         TextField(
                                           controller: priceController,
-                                          
+
                                           decoration: InputDecoration(
                                             labelText: "Enter Price",
                                           ),
@@ -153,7 +152,7 @@ class GetProduct extends StatelessWidget {
                                             .doc(product.id)
                                             .update({
                                               "name": nameController.text,
-                                              "price": priceController.text,
+                                              "price": int.parse(priceController.text),
                                               "category":
                                                   categoryController.text,
                                               "description":

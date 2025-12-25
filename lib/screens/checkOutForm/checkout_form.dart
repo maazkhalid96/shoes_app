@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
+import 'package:shoes_app_ui/screens/home/home.dart';
 
 // Order Success Screen
 class OrderSuccessScreen extends StatelessWidget {
@@ -23,7 +24,11 @@ class OrderSuccessScreen extends StatelessWidget {
               const SizedBox(height: 20),
               const Text(
                 "Order Placed Successfully!",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
@@ -35,14 +40,25 @@ class OrderSuccessScreen extends StatelessWidget {
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Home()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-                child: const Text("Continue Shopping", style: TextStyle(fontSize: 18, color: Colors.white)),
+                child: const Text(
+                  "Continue Shopping",
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -72,11 +88,20 @@ class _CheckoutFormState extends State<CheckoutForm> {
     setState(() => isLoading = true);
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    final cartSnapshot = await FirebaseFirestore.instance.collection("carts").doc(uid).collection("items").get();
+    final cartSnapshot = await FirebaseFirestore.instance
+        .collection("carts")
+        .doc(uid)
+        .collection("items")
+        .get();
 
     if (cartSnapshot.docs.isEmpty) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Your cart is empty!"), backgroundColor: Colors.red));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Your cart is empty!"),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
@@ -88,7 +113,12 @@ class _CheckoutFormState extends State<CheckoutForm> {
       int price = int.parse(item["price"].toString());
       int quantity = int.parse(item["quantity"].toString());
       total += price * quantity;
-      cartItems.add({"id": doc.id, "name": item["name"], "price": price, "quantity": quantity});
+      cartItems.add({
+        "id": doc.id,
+        "name": item["name"],
+        "price": price,
+        "quantity": quantity,
+      });
     }
 
     // Unique order ID
@@ -103,7 +133,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
       "city": cityController.text,
       "status": "pending",
       "createdAt": Timestamp.now(),
-      "estimatedDelivery": Timestamp.fromDate(DateTime.now().add(const Duration(days: 5))),
+      "estimatedDelivery": Timestamp.fromDate(
+        DateTime.now().add(const Duration(days: 5)),
+      ),
       "totalAmount": total,
       "items": cartItems,
     });
@@ -116,29 +148,46 @@ class _CheckoutFormState extends State<CheckoutForm> {
     setState(() => isLoading = false);
 
     // Navigate to success screen
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const OrderSuccessScreen()));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Checkout"), backgroundColor: Colors.green),
+      appBar: AppBar(
+        title: const Text("Checkout"),
+        backgroundColor: Colors.green,
+      ),
       backgroundColor: const Color(0xfff5f5f5),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Delivery Details", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "Delivery Details",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
 
-            CustomInputField(hintText: "Full Name", prefixIcon: Icons.person, controller: nameController, textInputType: TextInputType.name),
+            CustomInputField(
+              hintText: "Full Name",
+              prefixIcon: Icons.person,
+              controller: nameController,
+              textInputType: TextInputType.name,
+            ),
             CustomInputField(
               hintText: "Phone Number",
               prefixIcon: Icons.phone,
               controller: phoneController,
               textInputType: TextInputType.phone,
-              inputFormatter: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(11)],
+              inputFormatter: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(11),
+              ],
             ),
             CustomInputField(
               hintText: "Complete Address",
@@ -158,7 +207,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
             const SizedBox(height: 30),
 
             isLoading
-                ? const Center(child: CircularProgressIndicator(color: Colors.green))
+                ? const Center(
+                    child: CircularProgressIndicator(color: Colors.green),
+                  )
                 : CustomButton(
                     text: "Place Order",
                     onPressed: () {
@@ -166,17 +217,21 @@ class _CheckoutFormState extends State<CheckoutForm> {
                           phoneController.text.isEmpty ||
                           addressController.text.isEmpty ||
                           cityController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Please fill all fields"),
-                          backgroundColor: Colors.red,
-                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please fill all fields"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                         return;
                       }
                       if (phoneController.text.length < 11) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Enter valid phone number"),
-                          backgroundColor: Colors.red,
-                        ));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Enter valid phone number"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                         return;
                       }
                       placeOrder();

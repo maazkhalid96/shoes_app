@@ -7,7 +7,7 @@ import 'package:shoes_app_ui/controller/controller.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
 class Login extends StatefulWidget {
-   Login({super.key});
+  Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -15,6 +15,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   LoginController getController = LoginController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,7 @@ class _LoginState extends State<Login> {
                     controller: getController.emailController,
                     prefixIcon: Icons.email_outlined,
                   ),
-                  
+
                   CustomInputField(
                     hintText: "Enter Password",
                     controller: getController.passwordController,
@@ -84,18 +85,27 @@ class _LoginState extends State<Login> {
                     prefixIcon: Icons.remove_red_eye,
                   ),
                   SizedBox(height: 35),
-                  CustomButton(
-                    text: "Login in",
-                    onPressed: () {
-                      LoginAuth().login(
-                        email: getController.emailController.text,
-                        password: getController.passwordController.text,
-                        emailController: getController.emailController,
-                        passwordController: getController.passwordController,
-                        context: context,
-                      );
-                    },
-                  ),
+                  isLoading
+                      ? CircularProgressIndicator()
+                      : CustomButton(
+                          text: "Login in",
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await LoginAuth().login(
+                              email: getController.emailController.text,
+                              password: getController.passwordController.text,
+                              emailController: getController.emailController,
+                              passwordController:
+                                  getController.passwordController,
+                              context: context,
+                            );
+                            setState(() {
+                              isLoading = false;  
+                            });
+                          },
+                        ),
                   SizedBox(height: 25),
 
                   Column(

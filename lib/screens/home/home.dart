@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/slider_banner.dart';
 import 'package:shoes_app_ui/screens/carts/carts_data.dart';
@@ -8,7 +8,7 @@ import 'package:shoes_app_ui/screens/detail/product_detail.dart';
 import 'package:shoes_app_ui/screens/profile/profile.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -18,35 +18,10 @@ PageController pageController = PageController();
 int currentPage = 0;
 
 class _HomeState extends State<Home> {
-
-  // Get current user
-  // User? currentUser = FirebaseAuth.instance.currentUser;
-
-  // ---------------- FAV FUNCTION ----------------
-  // Future<void> handelFav(Map product) async {
-  //   if (currentUser == null) return; // agar user null ho to exit
-  //   final docRef = _firestore
-  //       .collection("favorites")
-  //       .doc(currentUser!.uid)
-  //       .collection("items")
-  //       .doc(product["id"]); // product id as doc id
-
-  //   final doc = await docRef.get();
-
-  //   if (doc.exists) {
-  //     // agar already favorite hai → remove karo
-  //     await docRef.delete();
-  //   } else {
-  //     // nahi hai → add karo
-  //     await docRef.set({
-  //       "name": product["name"],
-  //       "price": product["price"],
-  //       "image": product["image"],
-  //       "desc": product["desc"] ?? "",
-  //       "addedAt": FieldValue.serverTimestamp(),
-  //     });
-  //   }
-  // }
+  TextEditingController searchController = TextEditingController();
+  String searchText = "";
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +37,39 @@ class _HomeState extends State<Home> {
                 MaterialPageRoute(builder: (_) => Profile()),
               );
             },
-            child: CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(
-                'https://tse1.mm.bing.net/th/id/OIP.CIN13u4y3HNeUOEZZo-wNgHaFj?pid=Api&P=0&h=220',
-              ),
+            child: FutureBuilder<DocumentSnapshot>(
+              future: firestore
+                  .collection("users")
+                  .doc(auth.currentUser!.uid)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircleAvatar(
+                    radius: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  );
+                }
+
+                if (!snapshot.hasData || !snapshot.data!.exists) {
+                  return CircleAvatar(radius: 20, child: Icon(Icons.person));
+                }
+
+                var usersData = snapshot.data!.data() as Map<String, dynamic>;
+
+                return CircleAvatar(
+                  radius: 20,
+                  backgroundImage:
+                      (usersData['profileImagePath'] != null &&
+                          usersData['profileImagePath'] != "")
+                      ? FileImage(File(usersData['profileImagePath']))
+                      : null,
+                  child:
+                      (usersData['profileImagePath'] == null ||
+                          usersData['profileImagePath'] == "")
+                      ? Icon(Icons.person)
+                      : null,
+                );
+              },
             ),
           ),
         ),
@@ -89,7 +92,10 @@ class _HomeState extends State<Home> {
           ),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.search, color: Colors.blueAccent),
+          ),
           IconButton(
             onPressed: () {
               Navigator.push(
@@ -101,13 +107,14 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             children: [
+              // --- Search Bar ---
               TextField(
+                controller: searchController,
                 decoration: InputDecoration(
                   fillColor: const Color.fromARGB(255, 245, 230, 230),
                   hintText: "Search shoes",
@@ -118,10 +125,16 @@ class _HomeState extends State<Home> {
                     borderSide: BorderSide.none,
                   ),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value.toLowerCase();
+                  });
+                },
               ),
 
               SizedBox(height: 20),
 
+              // --- Slider Banner ---
               Container(
                 height: 250,
                 child: PageView(
@@ -183,6 +196,8 @@ class _HomeState extends State<Home> {
               ),
 
               SizedBox(height: 20),
+
+              // --- Products Grid ---
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("products")
@@ -192,9 +207,16 @@ class _HomeState extends State<Home> {
                     return Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.data!.docs.isEmpty) {
-                    return Center(child: Text("No data Found"));
+                    return Center(child: Text("No products found"));
                   }
-                  var product = snapshot.data!.docs;
+
+                  var allProducts = snapshot.data!.docs;
+
+                  // Filter products based on search text
+                  var filteredProducts = allProducts.where((product) {
+                    String name = product["name"].toString().toLowerCase();
+                    return name.contains(searchText);
+                  }).toList();
 
                   return GridView.builder(
                     shrinkWrap: true,
@@ -205,10 +227,10 @@ class _HomeState extends State<Home> {
                       mainAxisSpacing: 12,
                       childAspectRatio: 0.75,
                     ),
-                    itemCount: product.length,
+                    itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
-                      var data = product[index].data();
-                      data["id"] = product[index].id;
+                      var data = filteredProducts[index].data();
+                      data["id"] = filteredProducts[index].id;
 
                       return GestureDetector(
                         onTap: () {
@@ -281,32 +303,6 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-
-                              SizedBox(height: 10),
-                              // IconButton(
-                              //   onPressed: () {
-                              //     handelFav(data);
-                              //   },
-                              //   icon: StreamBuilder<DocumentSnapshot>(
-                              //     stream: FirebaseFirestore.instance
-                              //         .collection("favorites")
-                              //         .doc(currentUser?.uid)
-                              //         .collection("items")
-                              //         .doc(data["id"])
-                              //         .snapshots(),
-                              //     builder: (context, snapshot) {
-                              //       if (snapshot.hasData &&
-                              //           snapshot.data!.exists) {
-                              //         return Icon(
-                              //           Icons.favorite,
-                              //           color: Colors.red,
-                              //         );
-                              //       } else {
-                              //         return Icon(Icons.favorite_border);
-                              //       }
-                              //     },
-                              //   ),
-                              // ),
                             ],
                           ),
                         ),

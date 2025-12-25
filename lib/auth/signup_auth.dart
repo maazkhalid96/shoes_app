@@ -11,6 +11,7 @@ class SignupAuth {
     required String password,
     required String phone,
     required String username,
+    String? imagePath,
 
     required BuildContext context,
     required TextEditingController userNameController,
@@ -18,7 +19,7 @@ class SignupAuth {
     required TextEditingController emailController,
     required TextEditingController passwordController,
   }) async {
-    dataauth() {}
+     dataauth() {}
     if (email.isEmpty ||
         password.isEmpty ||
         phone.isEmpty ||
@@ -46,12 +47,13 @@ class SignupAuth {
         email: email,
         password: password,
       );
-      String imageUrl = await (res.user!.uid);
 
       firestore.collection("users").doc(res.user?.uid).set({
         "email": email,
         "phone": phone,
         "username": username,
+        "profileImagePath" : imagePath ?? "",
+        "role" :  "user",
         "createdAt": DateTime.now(),
       });
 

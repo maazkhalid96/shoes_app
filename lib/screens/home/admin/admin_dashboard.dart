@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/screens/home/admin/add_product.dart';
+import 'package:shoes_app_ui/screens/home/admin/admin_order_screen.dart';
 import 'package:shoes_app_ui/screens/home/admin/get_product.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
@@ -36,14 +37,25 @@ class _AdminDashboardState extends State<AdminDashboard> {
               child: DrawerHeader(
                 child: Text(
                   "Admin Panel",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold,color: Colors.black),
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
 
             // Add Product
             ListTile(
-              title: Text("Add Product",style: TextStyle(fontSize: 25 ,color: Colors.black87,fontWeight: FontWeight.bold)),
+              title: Text(
+                "Add Product",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
                 setState(() {
                   screen = AddProduct();
@@ -52,8 +64,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
               },
             ),
             // Get Product
+            Divider(color: Colors.black),
             ListTile(
-              title: Text("Get Product",style: TextStyle(fontSize: 25 ,color: Colors.black87,fontWeight: FontWeight.bold)),
+              title: Text(
+                "Get Product",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
                 setState(() {
                   screen = GetProduct();
@@ -61,8 +81,36 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 Navigator.pop(context);
               },
             ),
+
+            //  All Order
+            Divider(color: Colors.black),
             ListTile(
-              title: Text("Home Page",style: TextStyle(fontSize: 25 ,color: Colors.black87,fontWeight: FontWeight.bold)),
+              title: Text(
+                "All Orders",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onTap: () {
+                setState(() {
+                  screen = AdminOrdersScreen();
+                });
+                Navigator.pop(context);
+              },
+            ),
+
+            Divider(color: Colors.black),
+            ListTile(
+              title: Text(
+                "Home Page",
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onTap: () {
                 Navigator.push(
                   context,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/screens/home/admin/admin_dashboard.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // ✅ Added import
 
 class LoginAuth {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -26,16 +27,25 @@ class LoginAuth {
         email: email,
         password: password,
       );
-      print('login dataaaaaa: ${res.user?.uid}');
-      if (email == "maaz@gmail.com") {
-        Navigator.push(
+      // print('login dataaaaaa: ${res.user?.uid}');
+      final uid = res.user!.uid;
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+
+      final role = userDoc["role"];
+
+      if (role == "admin") {
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AdminDashboard()),
+          MaterialPageRoute(builder: (_) => AdminDashboard()),
         );
       } else {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (_) => Home()),
         );
       }
 
