@@ -4,6 +4,7 @@ import 'package:shoes_app_ui/auth/login_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/controller.dart';
+import 'package:shoes_app_ui/screens/forgotPassword/forgot_password.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
 class Login extends StatefulWidget {
@@ -102,7 +103,7 @@ class _LoginState extends State<Login> {
                               context: context,
                             );
                             setState(() {
-                              isLoading = false;  
+                              isLoading = false;
                             });
                           },
                         ),
@@ -111,11 +112,15 @@ class _LoginState extends State<Login> {
                   Column(
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Forgot Password?",
-                          style: TextStyle(color: Colors.black),
-                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ForgotPasswordScreen(),
+                            ),
+                          );
+                        },
+                        child: Text("Forgot Password?"),
                       ),
                       TextButton(
                         onPressed: () {

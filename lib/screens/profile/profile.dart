@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/profile_menu_item.dart';
+import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
 
 class Profile extends StatefulWidget {
@@ -101,7 +102,14 @@ class _ProfileState extends State<Profile> {
                         icon: Icons.shopping_bag,
                         iconColor: Colors.blueAccent,
                         title: "My Orders",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyOrderScreen(),
+                            ),
+                          );
+                        },
                       ),
                       Divider(
                         color: Colors.white30,

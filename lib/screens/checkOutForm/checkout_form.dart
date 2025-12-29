@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
+import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 
 // Order Success Screen
 class OrderSuccessScreen extends StatelessWidget {
@@ -31,13 +32,25 @@ class OrderSuccessScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 "Your shoes will be delivered soon.",
                 style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
+              ListTile(
+                leading: Icon(Icons.shopping_bag),
+                title: Text("My Orders"),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MyOrderScreen()),
+                  );
+                },
+              ),
+              SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
