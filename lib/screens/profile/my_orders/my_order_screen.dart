@@ -8,13 +8,25 @@ class MyOrderScreen extends StatelessWidget {
 
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return Colors.orange;
+      case "shipped":
+        return Colors.blue;
+      case "delivered":
+        return Colors.green;
+      case "canceled":
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("My Orders"),
-        backgroundColor: Colors.green,
-      ),
+      appBar: AppBar(title: Text("My Orders"), backgroundColor: Colors.green),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("orders")
@@ -22,7 +34,6 @@ class MyOrderScreen extends StatelessWidget {
             .orderBy("createdAt", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
@@ -49,9 +60,7 @@ class MyOrderScreen extends StatelessWidget {
                       Text(
                         "Status: ${order["status"]}",
                         style: TextStyle(
-                          color: order["status"] == "pending"
-                              ? Colors.orange
-                              : Colors.green,
+                          color: getStatusColor(order["status"]),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -62,7 +71,9 @@ class MyOrderScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => OrderDetail(),
+                        builder: (_) => OrderDetail(
+                          orderData: order.data() as Map<String, dynamic>,
+                        ),
                       ),
                     );
                   },

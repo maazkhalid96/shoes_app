@@ -16,8 +16,10 @@ class AddProduct extends StatefulWidget {
 
 class _AddProductState extends State<AddProduct> {
   final AddProductController getController = AddProductController();
+  String? selectedCategory;
   bool isLoading = false;
   File? imageFilee;
+  List<String> categories = ["Men Shoes", "Women Shoes", "Kids Shoes"];
 
   // Pick image from gallery
   pickImage() async {
@@ -104,16 +106,36 @@ class _AddProductState extends State<AddProduct> {
               controller: getController.price,
             ),
             SizedBox(height: 12),
-            CustomInputField(
-              hintText: "Category",
-              controller: getController.category,
+            DropdownButtonFormField<String>(
+              value: selectedCategory,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+
+                  borderSide: BorderSide.none,
+                ),
+
+                hintText: "Select Category",
+              ),
+              items: categories.map((cat) {
+                return DropdownMenuItem(value: cat, child: Text(cat));
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCategory = value;
+                  getController.category.text = value!;
+                });
+              },
             ),
+
             SizedBox(height: 12),
             CustomInputField(
               hintText: "Description",
               controller: getController.description,
               maxline: 5,
-              
             ),
             SizedBox(height: 12),
             Column(
@@ -133,9 +155,10 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 SizedBox(height: 15),
-                isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : CustomButton(text: "Add Product", onPressed: addProduct),
+
+                isLoading 
+                    ? Center(child: CircularProgressIndicator()):
+                    CustomButton ( text: "Add Product", onPressed: addProduct),
               ],
             ),
           ],

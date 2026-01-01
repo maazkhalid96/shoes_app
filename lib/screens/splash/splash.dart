@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -16,32 +15,17 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
 
-    // 2.5 sec ke baad fade-out start
     Future.delayed(const Duration(seconds: 2), () {
       setState(() => fadeOut = true);
     });
 
-    // 3 sec ke baad Login page open
 
     Future.delayed(const Duration(seconds: 3), () {
-      User? user = FirebaseAuth.instance.currentUser;
   Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Login()),
         );
-    //   if (user != null) {
-    //     Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(builder: (_) => Home()),
-    //     );
-    //     print("User is logged in: ${user.email}");
-    //   } else {
-    //     Navigator.pushReplacement(
-    //       context,
-    //       MaterialPageRoute(builder: (_) => Login()),
-    //     );
-    //     print("User is not logged in");
-    //   }
+
     });
   }
 

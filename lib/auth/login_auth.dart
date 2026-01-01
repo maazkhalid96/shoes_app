@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/screens/home/admin/admin_dashboard.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // ✅ Added import
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+
 
 class LoginAuth {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -24,8 +25,8 @@ class LoginAuth {
 
     try {
       final res = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+        email: email.trim(),
+        password: password.trim(),
       );
       // print('login dataaaaaa: ${res.user?.uid}');
       final uid = res.user!.uid;

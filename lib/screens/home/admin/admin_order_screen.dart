@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shoes_app_ui/screens/home/admin/admin_order_detail.dart';
 
 class AdminOrdersScreen extends StatelessWidget {
   const AdminOrdersScreen({super.key});
@@ -15,12 +16,10 @@ class AdminOrdersScreen extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection("orders")
             .orderBy("createdAt", descending: true)
-            .snapshots(), // realtime updates
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           final orders = snapshot.data!.docs;
@@ -36,16 +35,18 @@ class AdminOrdersScreen extends StatelessWidget {
               var data = order.data() as Map<String, dynamic>;
 
               return Card(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 elevation: 4,
                 child: ListTile(
                   title: Text(
                     "Order #${data['orderId']} - ${data['name']}",
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +85,12 @@ class AdminOrdersScreen extends StatelessWidget {
                     color: Colors.grey[400],
                   ),
                   onTap: () {
-                    // Optional: Navigate to Order Detail screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdminOrderDetail(orderId: order.id),
+                      ),
+                    );
                   },
                 ),
               );
