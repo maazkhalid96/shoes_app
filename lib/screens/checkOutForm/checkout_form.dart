@@ -2,13 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/screens/checkOutForm/order_success_screen.dart';
-import 'package:shoes_app_ui/screens/home/home.dart';
-import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
-
-// Order Success Screen
 
 class CheckoutForm extends StatefulWidget {
   const CheckoutForm({super.key});
@@ -22,10 +19,15 @@ class _CheckoutFormState extends State<CheckoutForm> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
+  final TextEditingController paymentController = TextEditingController();
+  String? selectedPayment;
+
+
+  List<String> payment = ["Cash on Delivery", "Card", 'JazzCash', 'EasyPaisa'];
 
   bool isLoading = false;
 
-  Future<void> placeOrder() async {
+  placeOrder() async {
     setState(() => isLoading = true);
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -62,7 +64,6 @@ class _CheckoutFormState extends State<CheckoutForm> {
       });
     }
 
-    // Unique order ID
     String orderId = DateTime.now().millisecondsSinceEpoch.toString();
 
     await FirebaseFirestore.instance.collection("orders").doc(orderId).set({
@@ -78,6 +79,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
         DateTime.now().add(const Duration(days: 5)),
       ),
       "totalAmount": total,
+      "paymentMethod": selectedPayment,
       "items": cartItems,
     });
 
@@ -88,7 +90,6 @@ class _CheckoutFormState extends State<CheckoutForm> {
 
     setState(() => isLoading = false);
 
-    // Navigate to success screen
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
@@ -144,6 +145,28 @@ class _CheckoutFormState extends State<CheckoutForm> {
               maxline: 1,
               textInputType: TextInputType.text,
             ),
+            DropdownButtonFormField(
+              value: selectedPayment,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.payment_outlined, color: Colors.blue),
+                hintText: "Payment",
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+
+              items: payment.map((String option) {
+                return DropdownMenuItem(value: option, child: Text(option));
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedPayment = newValue;
+                });
+              },
+            ),
 
             const SizedBox(height: 30),
 
@@ -157,7 +180,8 @@ class _CheckoutFormState extends State<CheckoutForm> {
                       if (nameController.text.isEmpty ||
                           phoneController.text.isEmpty ||
                           addressController.text.isEmpty ||
-                          cityController.text.isEmpty) {
+                          cityController.text.isEmpty ||
+                          selectedPayment == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Please fill all fields"),

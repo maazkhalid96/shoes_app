@@ -7,7 +7,6 @@ import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/profile_menu_item.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Profile extends StatefulWidget {
