@@ -122,6 +122,8 @@ class AdminOrderDetail extends StatelessWidget {
                               .collection("orders")
                               .doc(orderId)
                               .update({"status": "Cancelled"});
+                          if (!context.mounted) return;
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Order Cancelled")),
                           );
@@ -157,6 +159,8 @@ class AdminOrderDetail extends StatelessWidget {
                                     .collection("orders")
                                     .doc(orderId)
                                     .update({"status": status});
+                                if (!context.mounted) return;
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("Status Updated to"),

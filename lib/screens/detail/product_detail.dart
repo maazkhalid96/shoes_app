@@ -42,12 +42,12 @@ class _ProductDetailState extends State<ProductDetail> {
               "quantity": currentQty + 1,
               "totalPrice": price * (currentQty + 1),
             });
-
+        if (!context.mounted) return;
         showDialogMessage(context, "Product quantity updated", Colors.orange);
         return;
       }
 
-      // 🟢 PRODUCT NOT EXISTS → ADD NEW
+      //  PRODUCT NOT EXISTS → ADD NEW
       await FirebaseFirestore.instance
           .collection("carts")
           .doc(user!.uid)
@@ -60,10 +60,11 @@ class _ProductDetailState extends State<ProductDetail> {
             "quantity": 1,
             "totalPrice": int.parse(product["price"].toString()),
           });
+      if (!context.mounted) return;
 
       showDialogMessage(context, "Added to cart successfully", Colors.green);
     } catch (e) {
-      print("Cart Error: $e");
+      Error();
     }
   }
 
@@ -102,7 +103,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                
+
                 Text(
                   "Rs.${widget.product["price"]}",
                   style: const TextStyle(
@@ -141,14 +142,16 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 }
 
-/// CENTER DIALOG MESSAGE (Reusable)
 void showDialogMessage(BuildContext context, String message, Color color) {
   showDialog(
     context: context,
     barrierDismissible: false,
+
     builder: (context) {
-      Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
-        Navigator.pop(context);
+      Future.delayed(Duration(seconds: 1, milliseconds: 500), () {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
       });
 
       return Center(

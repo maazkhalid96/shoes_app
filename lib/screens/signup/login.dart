@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoes_app_ui/auth/login_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
@@ -8,7 +9,7 @@ import 'package:shoes_app_ui/screens/forgotPassword/forgot_password.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
 class Login extends StatefulWidget {
-  Login({super.key});
+  const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -17,6 +18,19 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   LoginController getController = LoginController();
   bool isLoading = false;
+
+  // googleSignIn() async {
+  //   String clientId =
+  //       '879448455612-su8rdbnovc10id3irdfhh163v8cieohh.apps.googleusercontent.com';
+  //   try {
+  //     GoogleSignIn signIn = GoogleSignIn.instance;
+      
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text(e.toString())));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +122,10 @@ class _LoginState extends State<Login> {
                           },
                         ),
                   SizedBox(height: 25),
-
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text("Continue with goggle"),
+                  ),
                   Column(
                     children: [
                       TextButton(

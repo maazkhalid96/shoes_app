@@ -24,6 +24,7 @@ class _AddProductState extends State<AddProduct> {
   // Pick image from gallery
   pickImage() async {
     final pick = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (!mounted) return;
     if (pick == null) {
       ScaffoldMessenger.of(
         context,
@@ -62,6 +63,7 @@ class _AddProductState extends State<AddProduct> {
         "image": imageFilee!.path,
         "createdAt": DateTime.now(),
       });
+    if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
@@ -156,9 +158,9 @@ class _AddProductState extends State<AddProduct> {
                 ),
                 SizedBox(height: 15),
 
-                isLoading 
-                    ? Center(child: CircularProgressIndicator()):
-                    CustomButton ( text: "Add Product", onPressed: addProduct),
+                isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : CustomButton(text: "Add Product", onPressed: addProduct),
               ],
             ),
           ],

@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
-import 'package:shoes_app_ui/screens/checkOutForm/order_success_screen.dart';
+import 'package:shoes_app_ui/screens/checkoutform/order_success_screen.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CheckoutForm extends StatefulWidget {
   const CheckoutForm({super.key});
@@ -22,7 +23,6 @@ class _CheckoutFormState extends State<CheckoutForm> {
   final TextEditingController paymentController = TextEditingController();
   String? selectedPayment;
 
-
   List<String> payment = ["Cash on Delivery", "Card", 'JazzCash', 'EasyPaisa'];
 
   bool isLoading = false;
@@ -38,6 +38,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
         .get();
 
     if (cartSnapshot.docs.isEmpty) {
+      if (!mounted) return;
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -88,12 +89,65 @@ class _CheckoutFormState extends State<CheckoutForm> {
       await doc.reference.delete();
     }
 
+    if (!mounted) return;
     setState(() => isLoading = false);
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
     );
+  }
+
+  getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!mounted) return;
+    if (!serviceEnabled) {
+      return ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Location services are disabled.")),
+      );
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Location permission denied")),
+        );
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Location permission denied permanently, enable it from settings",
+          ),
+        ),
+      );
+      return;
+    }
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    Placemark place = placemarks[0];
+
+    if (!mounted) return;
+    setState(() {
+      addressController.text =
+          "${place.street}, ${place.subLocality}, ${place.subAdministrativeArea}";
+      cityController.text = place.locality ?? '';
+    });
   }
 
   @override
@@ -144,6 +198,20 @@ class _CheckoutFormState extends State<CheckoutForm> {
               controller: cityController,
               maxline: 1,
               textInputType: TextInputType.text,
+            ),
+            SizedBox(height: 10),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.my_location),
+              label: const Text("Use Current Location"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              onPressed: () async {
+                await getCurrentLocation();
+              },
             ),
             DropdownButtonFormField(
               value: selectedPayment,

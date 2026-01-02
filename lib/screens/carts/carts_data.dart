@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shoes_app_ui/screens/checkOutForm/checkout_form.dart';
+import 'package:shoes_app_ui/screens/checkoutform/checkout_form.dart';
 
 class CartsData extends StatefulWidget {
-  CartsData({super.key});
+  const CartsData({super.key});
 
   @override
   State<CartsData> createState() => _CartsDataState();
@@ -250,6 +250,7 @@ class _CartsDataState extends State<CartsData> {
                                   .collection("items")
                                   .doc(cartId)
                                   .delete();
+                              if (!context.mounted) return;
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

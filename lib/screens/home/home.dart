@@ -20,13 +20,13 @@ int currentPage = 0;
 class _HomeState extends State<Home> {
   TextEditingController searchController = TextEditingController();
   String searchText = "";
+  String selectedCategory = "All";
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: Padding(
@@ -197,6 +197,17 @@ class _HomeState extends State<Home> {
               ),
 
               SizedBox(height: 20),
+
+            //  SizedBox(
+            //   height: 60,
+            //   child: ListView(
+            //     scrollDirection:Axis.horizontal,
+            //     children: [
+                  
+            //     ],
+            //   ),
+            //  ),
+              // SizedBox(height: 10,),
 
               // --- Products Grid ---
               StreamBuilder(

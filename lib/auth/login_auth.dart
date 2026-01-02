@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/screens/home/admin/admin_dashboard.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; 
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginAuth {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -28,13 +27,13 @@ class LoginAuth {
         email: email.trim(),
         password: password.trim(),
       );
-      // print('login dataaaaaa: ${res.user?.uid}');
       final uid = res.user!.uid;
 
       final userDoc = await FirebaseFirestore.instance
           .collection("users")
           .doc(uid)
           .get();
+      if (!context.mounted) return;
 
       final role = userDoc["role"];
 
@@ -58,10 +57,7 @@ class LoginAuth {
       passwordController.clear();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
+      } else if (e.code == 'wrong-password') {}
     }
   }
 }

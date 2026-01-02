@@ -19,7 +19,6 @@ class SignupAuth {
     required TextEditingController emailController,
     required TextEditingController passwordController,
   }) async {
-     dataauth() {}
     if (email.isEmpty ||
         password.isEmpty ||
         phone.isEmpty ||
@@ -47,13 +46,14 @@ class SignupAuth {
         email: email,
         password: password,
       );
+      if(!context.mounted) return;
 
       firestore.collection("users").doc(res.user?.uid).set({
         "email": email,
         "phone": phone,
         "username": username,
-        "profileImagePath" : imagePath ?? "",
-        "role" :  "user",
+        "profileImagePath": imagePath ?? "",
+        "role": "user",
         "createdAt": DateTime.now(),
       });
 
@@ -67,12 +67,9 @@ class SignupAuth {
       Navigator.pop(context, MaterialPageRoute(builder: (context) => Login()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
+      } else if (e.code == 'email-already-in-use') {}
     } catch (e) {
-      print(e);
+      Error();
     }
   }
 }
