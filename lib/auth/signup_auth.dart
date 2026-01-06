@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shoes_app_ui/services/cloudinary_service.dart';
 
 class SignupAuth {
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -46,13 +49,19 @@ class SignupAuth {
         email: email,
         password: password,
       );
-      if(!context.mounted) return;
-
+      if (!context.mounted) return;
+     String imageUrl = "";
+      if (imagePath != null) {
+        String? uploadedUrl = await CloudinaryService.uploadImage(File(imagePath));
+        if (uploadedUrl != null) {
+          imageUrl = uploadedUrl;
+        }
+      }
       firestore.collection("users").doc(res.user?.uid).set({
         "email": email,
         "phone": phone,
         "username": username,
-        "profileImagePath": imagePath ?? "",
+        "profileImagePath": imageUrl,
         "role": "user",
         "createdAt": DateTime.now(),
       });

@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class CloudinaryService {
-  static const String cloudName = "dx7htpnaj"; // Tumhara Cloud Name
-  static const String uploadPreset = "flutter_unsigned"; // Tumhara unsigned preset
+  static const String cloudName = "dx7htpnaj"; //  Cloud Name
+  static const String uploadPreset = "flutter_unsigned"; //  unsigned preset
 
   static Future<String?> uploadImage(File image) async {
     final url = Uri.parse(

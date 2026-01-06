@@ -79,12 +79,17 @@ class _ProductDetailState extends State<ProductDetail> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           widget.product["image"] != null
-              ? Image.file(
-                  File(widget.product["image"]),
-                  height: 250,
+              ? 
+              Image.network(widget.product["image"],
                   width: double.infinity,
                   fit: BoxFit.cover,
-                )
+                  height: 250,
+              )
+              // Image.file(
+              //     File(widget.product["image"]),
+              //     height: 250,
+              
+              //   )
               : const Icon(Icons.image, size: 60),
 
           const SizedBox(height: 25),

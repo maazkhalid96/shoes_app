@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoes_app_ui/auth/login_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/controller.dart';
 import 'package:shoes_app_ui/screens/forgotPassword/forgot_password.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});

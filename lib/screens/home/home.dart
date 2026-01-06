@@ -58,11 +58,12 @@ class _HomeState extends State<Home> {
                 var usersData = snapshot.data!.data() as Map<String, dynamic>;
 
                 return CircleAvatar(
-                  radius: 20,
+                  radius: 50,
                   backgroundImage:
                       (usersData['profileImagePath'] != null &&
                           usersData['profileImagePath'] != "")
-                      ? FileImage(File(usersData['profileImagePath']))
+                      ? NetworkImage(usersData["profileImagePath"])
+                      //  FileImage(File(usersData['profileImagePath']))
                       : null,
                   child:
                       (usersData['profileImagePath'] == null ||
@@ -198,15 +199,15 @@ class _HomeState extends State<Home> {
 
               SizedBox(height: 20),
 
-            //  SizedBox(
-            //   height: 60,
-            //   child: ListView(
-            //     scrollDirection:Axis.horizontal,
-            //     children: [
-                  
-            //     ],
-            //   ),
-            //  ),
+              //  SizedBox(
+              //   height: 60,
+              //   child: ListView(
+              //     scrollDirection:Axis.horizontal,
+              //     children: [
+
+              //     ],
+              //   ),
+              //  ),
               // SizedBox(height: 10,),
 
               // --- Products Grid ---
@@ -269,11 +270,16 @@ class _HomeState extends State<Home> {
                                     top: Radius.circular(16),
                                   ),
                                   child: data["image"] != null
-                                      ? Image.file(
-                                          File(data["image"]),
+                                      ? Image.network(
+                                          data["image"],
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                         )
+                                      // Image.file(
+                                      //     File(data["image"]),
+                                      //     fit: BoxFit.cover,
+                                      //     width: double.infinity,
+                                      //   )
                                       : Icon(
                                           Icons.image,
                                           size: 70,

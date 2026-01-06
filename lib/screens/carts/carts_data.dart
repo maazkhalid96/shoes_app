@@ -50,7 +50,7 @@ class _CartsDataState extends State<CartsData> {
         backgroundColor: Colors.blueAccent,
       ),
 
-      // ✅ TOTAL + CHECKOUT IN ONE ROW
+      // TOTAL + CHECKOUT IN ONE ROW
       bottomNavigationBar: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection("carts")
@@ -173,8 +173,8 @@ class _CartsDataState extends State<CartsData> {
                               left: Radius.circular(12),
                             ),
                             child: item["image"] != null
-                                ? Image.file(
-                                    File(item["image"]),
+                                ? Image.network(
+                                    item["image"],
                                     height: 100,
                                     width: 100,
                                     fit: BoxFit.cover,

@@ -48,8 +48,8 @@ class GetProduct extends StatelessWidget {
                           top: Radius.circular(12),
                         ),
                         child: product["image"] != null
-                            ? Image.file(
-                                File(product["image"]),
+                            ? Image.network(
+                                product["image"],
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                               )
@@ -152,7 +152,9 @@ class GetProduct extends StatelessWidget {
                                             .doc(product.id)
                                             .update({
                                               "name": nameController.text,
-                                              "price": int.parse(priceController.text),
+                                              "price": int.parse(
+                                                priceController.text,
+                                              ),
                                               "category":
                                                   categoryController.text,
                                               "description":

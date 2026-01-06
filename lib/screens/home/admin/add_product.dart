@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
+
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/add_product_controller.dart';
+import 'package:shoes_app_ui/services/cloudinary_service.dart';
 
 class AddProduct extends StatefulWidget {
   const AddProduct({super.key});
@@ -53,6 +55,21 @@ class _AddProductState extends State<AddProduct> {
     setState(() {
       isLoading = true;
     });
+    String? imageUrl;
+
+    try {
+      imageUrl = await CloudinaryService.uploadImage(imageFilee!);
+      if (imageUrl == null) {
+        setState(() => isLoading = false);
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Image upload failed")));
+        return;
+      }
+    } catch (e) {
+      print(e);
+    }
 
     try {
       await FirebaseFirestore.instance.collection("products").add({
@@ -60,10 +77,10 @@ class _AddProductState extends State<AddProduct> {
         "price": int.parse(getController.price.text),
         "category": getController.category.text,
         "description": getController.description.text,
-        "image": imageFilee!.path,
+        "image": imageUrl,
         "createdAt": DateTime.now(),
       });
-    if (!mounted) return;
+      if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
@@ -76,6 +93,7 @@ class _AddProductState extends State<AddProduct> {
       getController.description.clear();
       setState(() {
         imageFilee = null;
+        selectedCategory = null;
         isLoading = false;
       });
     } catch (e) {

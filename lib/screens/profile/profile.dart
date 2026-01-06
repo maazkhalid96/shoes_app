@@ -65,7 +65,8 @@ class _ProfileState extends State<Profile> {
                     backgroundImage:
                         (usersData['profileImagePath'] != null &&
                             usersData['profileImagePath'] != "")
-                        ? FileImage(File(usersData['profileImagePath']))
+                        ? 
+                        NetworkImage(usersData["profileImagePath"])
                         : null,
                     child:
                         (usersData['profileImagePath'] == null ||
