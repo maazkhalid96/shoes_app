@@ -34,7 +34,6 @@ class _SignupState extends State<Signup> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,34 +151,31 @@ class _SignupState extends State<Signup> {
                       prefixIcon: Icons.remove_red_eye,
                     ),
                     SizedBox(height: 35),
-                    isLoading
-                        ? CircularProgressIndicator()
-                        : CustomButton(
-                            text: "Sign up",
-                            onPressed: () async {
-                              setState(() {
-                                isLoading = true;
-                              });
 
-                              await SignupAuth().signUp(
-                                email: getController.emailController.text,
-                                password: getController.passwordController.text,
-                                username: getController.userNameController.text,
-                                phone: getController.phoneController.text,
-                                emailController: getController.emailController,
-                                userNameController:
-                                    getController.userNameController,
-                                passwordController:
-                                    getController.passwordController,
-                                phoneController: getController.phoneController,
-                                imagePath: profileImage?.path,
-                                context: context,
-                              );
-                              setState(() {
-                                isLoading = false;
-                              });
-                            },
-                          ),
+                    CustomButton(
+                      text: "Sign up",
+                      isLoading: isLoading,
+                      onPressed: () async {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        await SignupAuth().signUp(
+                          email: getController.emailController.text,
+                          password: getController.passwordController.text,
+                          username: getController.userNameController.text,
+                          phone: getController.phoneController.text,
+                          emailController: getController.emailController,
+                          userNameController: getController.userNameController,
+                          passwordController: getController.passwordController,
+                          phoneController: getController.phoneController,
+                          imagePath: profileImage?.path,
+                          context: context,
+                        );
+                        setState(() {
+                          isLoading = false;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),

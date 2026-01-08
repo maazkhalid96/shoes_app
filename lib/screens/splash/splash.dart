@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -15,12 +16,13 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(minutes: 2), () {
       setState(() => fadeOut = true);
     });
 
 
     Future.delayed(const Duration(seconds: 3), () {
+      if(!mounted) return;
   Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => Login()),
@@ -54,31 +56,31 @@ class _SplashState extends State<Splash> {
                       BoxShadow(color: Colors.black26, blurRadius: 20),
                     ],
                   ),
-                  child: const CircleAvatar(
-                    radius: 120,
+                  child:  CircleAvatar(
+                    radius: 120.w,
                     backgroundImage: AssetImage("assets/images/banner.jpg"),
                   ),
                 ),
-
-                const SizedBox(height: 30),
-
-                const Text(
+          
+                 SizedBox(height: 30.h),
+          
+                 Text(
                   "Welcome to Shoes Shop",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 28.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                   ),
                 ),
-
-                const SizedBox(height: 10),
-
-                const Text(
+          
+                 SizedBox(height: 10.h),
+          
+                 Text(
                   "Comfort • Quality • Style",
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontStyle: FontStyle.italic,
                   ),
                 ),

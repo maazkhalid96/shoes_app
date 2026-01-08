@@ -50,9 +50,11 @@ class SignupAuth {
         password: password,
       );
       if (!context.mounted) return;
-     String imageUrl = "";
+      String imageUrl = "";
       if (imagePath != null) {
-        String? uploadedUrl = await CloudinaryService.uploadImage(File(imagePath));
+        String? uploadedUrl = await CloudinaryService.uploadImage(
+          File(imagePath),
+        );
         if (uploadedUrl != null) {
           imageUrl = uploadedUrl;
         }
@@ -65,6 +67,7 @@ class SignupAuth {
         "role": "user",
         "createdAt": DateTime.now(),
       });
+      if (!context.mounted) return;
 
       ScaffoldMessenger.of(
         context,
@@ -73,12 +76,17 @@ class SignupAuth {
       passwordController.clear();
       phoneController.clear();
       userNameController.clear();
+      if (!context.mounted) return;
       Navigator.pop(context, MaterialPageRoute(builder: (context) => Login()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
       } else if (e.code == 'email-already-in-use') {}
     } catch (e) {
-      Error();
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Something went wrong")));
     }
   }
 }

@@ -68,7 +68,11 @@ class _AddProductState extends State<AddProduct> {
         return;
       }
     } catch (e) {
-      print(e);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Something went wrong")));
     }
 
     try {
@@ -100,6 +104,7 @@ class _AddProductState extends State<AddProduct> {
       setState(() {
         isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error: $e")));
@@ -175,10 +180,20 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
                 SizedBox(height: 15),
+                CustomButton(
+                  text: "Add Product",
+                  isLoading: isLoading,
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await addProduct();
+                    setState(() {
+                      isLoading = false;
+                    });
+                  },
+                ),
 
-                isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : CustomButton(text: "Add Product", onPressed: addProduct),
               ],
             ),
           ],

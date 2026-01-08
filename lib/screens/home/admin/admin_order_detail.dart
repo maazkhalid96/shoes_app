@@ -143,7 +143,7 @@ class AdminOrderDetail extends StatelessWidget {
                             : () async {
                                 String status = order["status"];
 
-                                if (status == "Pending") {
+                                if (status == "pending") {
                                   status = "Shipped";
                                 } else if (status == "Shipped") {
                                   status = "Delivered";

@@ -20,82 +20,93 @@ class _CheckoutFormState extends State<CheckoutForm> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
-  final TextEditingController paymentController = TextEditingController();
   String? selectedPayment;
 
   List<String> payment = ["Cash on Delivery", "Card", 'JazzCash', 'EasyPaisa'];
 
   bool isLoading = false;
 
-  placeOrder() async {
-    setState(() => isLoading = true);
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+  Future<void> placeOrder() async {
+    setState(() => isLoading = true); 
 
-    final cartSnapshot = await FirebaseFirestore.instance
-        .collection("carts")
-        .doc(uid)
-        .collection("items")
-        .get();
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    if (cartSnapshot.docs.isEmpty) {
+      final cartSnapshot = await FirebaseFirestore.instance
+          .collection("carts")
+          .doc(uid)
+          .collection("items")
+          .get();
+
+      if (cartSnapshot.docs.isEmpty) {
+        if (!mounted) return;
+        setState(() => isLoading = false); // Loader off
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Your cart is empty!"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      List<Map<String, dynamic>> cartItems = [];
+      int total = 0;
+
+      for (var doc in cartSnapshot.docs) {
+        var item = doc.data();
+        int price = int.parse(item["price"].toString());
+        int quantity = int.parse(item["quantity"].toString());
+        total += price * quantity;
+        cartItems.add({
+          "id": doc.id,
+          "name": item["name"],
+          "price": price,
+          "quantity": quantity,
+        });
+      }
+
+      String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      await FirebaseFirestore.instance.collection("orders").doc(orderId).set({
+        "orderId": orderId,
+        "userId": uid,
+        "name": nameController.text,
+        "phone": phoneController.text,
+        "address": addressController.text,
+        "city": cityController.text,
+        "status": "Pending",
+        "createdAt": Timestamp.now(),
+        "estimatedDelivery": Timestamp.fromDate(
+          DateTime.now().add(const Duration(days: 5)),
+        ),
+        "totalAmount": total,
+        "paymentMethod": selectedPayment,
+        "items": cartItems,
+      });
+
+      // Clear cart
+      for (var doc in cartSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
       if (!mounted) return;
-      setState(() => isLoading = false);
+      setState(() => isLoading = false); 
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => isLoading = false); // Loader off on error
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Your cart is empty!"),
+        SnackBar(
+          content: Text("Something went wrong: $e"),
           backgroundColor: Colors.red,
         ),
       );
-      return;
     }
-
-    List<Map<String, dynamic>> cartItems = [];
-    int total = 0;
-
-    for (var doc in cartSnapshot.docs) {
-      var item = doc.data();
-      int price = int.parse(item["price"].toString());
-      int quantity = int.parse(item["quantity"].toString());
-      total += price * quantity;
-      cartItems.add({
-        "id": doc.id,
-        "name": item["name"],
-        "price": price,
-        "quantity": quantity,
-      });
-    }
-
-    String orderId = DateTime.now().millisecondsSinceEpoch.toString();
-
-    await FirebaseFirestore.instance.collection("orders").doc(orderId).set({
-      "orderId": orderId,
-      "userId": uid,
-      "name": nameController.text,
-      "phone": phoneController.text,
-      "address": addressController.text,
-      "city": cityController.text,
-      "status": "pending",
-      "createdAt": Timestamp.now(),
-      "estimatedDelivery": Timestamp.fromDate(
-        DateTime.now().add(const Duration(days: 5)),
-      ),
-      "totalAmount": total,
-      "paymentMethod": selectedPayment,
-      "items": cartItems,
-    });
-
-    // Clear cart
-    for (var doc in cartSnapshot.docs) {
-      await doc.reference.delete();
-    }
-
-    if (!mounted) return;
-    setState(() => isLoading = false);
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),
-    );
   }
 
   getCurrentLocation() async {
@@ -105,9 +116,10 @@ class _CheckoutFormState extends State<CheckoutForm> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!mounted) return;
     if (!serviceEnabled) {
-      return ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Location services are disabled.")),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Location services are disabled.")),
       );
+      return;
     }
 
     permission = await Geolocator.checkPermission();
@@ -132,6 +144,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
       );
       return;
     }
+
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
@@ -199,7 +212,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
               maxline: 1,
               textInputType: TextInputType.text,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton.icon(
               icon: const Icon(Icons.my_location),
               label: const Text("Use Current Location"),
@@ -209,14 +222,12 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              onPressed: () async {
-                await getCurrentLocation();
-              },
+              onPressed: getCurrentLocation,
             ),
             DropdownButtonFormField(
               value: selectedPayment,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.payment_outlined, color: Colors.blue),
+                prefixIcon: const Icon(Icons.payment_outlined, color: Colors.blue),
                 hintText: "Payment",
                 fillColor: Colors.white,
                 filled: true,
@@ -225,7 +236,6 @@ class _CheckoutFormState extends State<CheckoutForm> {
                   borderSide: BorderSide.none,
                 ),
               ),
-
               items: payment.map((String option) {
                 return DropdownMenuItem(value: option, child: Text(option));
               }).toList(),
@@ -235,41 +245,38 @@ class _CheckoutFormState extends State<CheckoutForm> {
                 });
               },
             ),
-
             const SizedBox(height: 30),
+            CustomButton(
+              text: "Place Order",
+              isLoading: isLoading,
+              onPressed: () async {
+                if (nameController.text.isEmpty ||
+                    phoneController.text.isEmpty ||
+                    addressController.text.isEmpty ||
+                    cityController.text.isEmpty ||
+                    selectedPayment == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please fill all fields"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
 
-            isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: Colors.green),
-                  )
-                : CustomButton(
-                    text: "Place Order",
-                    onPressed: () {
-                      if (nameController.text.isEmpty ||
-                          phoneController.text.isEmpty ||
-                          addressController.text.isEmpty ||
-                          cityController.text.isEmpty ||
-                          selectedPayment == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Please fill all fields"),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-                      if (phoneController.text.length < 11) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Enter valid phone number"),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-                      placeOrder();
-                    },
-                  ),
+                if (phoneController.text.length != 11) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Enter valid 11-digit phone number"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                await placeOrder();
+              },
+            ),
           ],
         ),
       ),

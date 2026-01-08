@@ -71,9 +71,7 @@ class MyOrderScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => OrderDetail(
-                          orderData: order.data() as Map<String, dynamic>,
-                        ),
+                        builder: (_) => OrderDetail(orderId: order.id),
                       ),
                     );
                   },

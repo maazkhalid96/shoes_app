@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +14,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail> {
   final User? user = FirebaseAuth.instance.currentUser;
+  bool isLoading = false;
 
   /// ADD TO CART LOGIC
   Future<void> carts(BuildContext context, Map product) async {
@@ -79,16 +78,15 @@ class _ProductDetailState extends State<ProductDetail> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           widget.product["image"] != null
-              ? 
-              Image.network(widget.product["image"],
+              ? Image.network(
+                  widget.product["image"],
                   width: double.infinity,
                   fit: BoxFit.cover,
                   height: 250,
-              )
+                )
               // Image.file(
               //     File(widget.product["image"]),
               //     height: 250,
-              
               //   )
               : const Icon(Icons.image, size: 60),
 
@@ -136,8 +134,17 @@ class _ProductDetailState extends State<ProductDetail> {
             padding: const EdgeInsets.all(10),
             child: CustomButton(
               text: "Add to Cart",
-              onPressed: () {
-                carts(context, widget.product);
+              isLoading: isLoading, 
+              onPressed: () async {
+                setState(() => isLoading = true);
+
+                await Future.delayed(const Duration(milliseconds: 50));
+                if (!context.mounted) return;
+
+                await carts(context, widget.product);
+
+                if (!mounted) return;
+                setState(() => isLoading = false);
               },
             ),
           ),

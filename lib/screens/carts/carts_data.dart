@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ class CartsData extends StatefulWidget {
 
 class _CartsDataState extends State<CartsData> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
+  bool isLoaderProceesing = false;
 
   Future<void> increaseQty(String cartId, Map item) async {
     int qty = item["quantity"];
