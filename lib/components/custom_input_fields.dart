@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomInputField extends StatelessWidget {
+class CustomInputField extends StatefulWidget {
   final String hintText;
   final IconData? prefixIcon;
   final bool obscureText;
@@ -21,6 +21,11 @@ class CustomInputField extends StatelessWidget {
   });
 
   @override
+  State<CustomInputField> createState() => _CustomInputFieldState();
+}
+
+class _CustomInputFieldState extends State<CustomInputField> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -32,15 +37,15 @@ class CustomInputField extends StatelessWidget {
         ],
       ),
       child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: textInputType,
-        inputFormatters: inputFormatter,
+        controller: widget.controller,
+        obscureText: widget.obscureText,
+        keyboardType: widget.textInputType,
+        inputFormatters: widget.inputFormatter,
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: widget.hintText,
           
-          prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon, color: Colors.blueAccent)
+          prefixIcon: widget.prefixIcon != null
+              ? Icon(widget.prefixIcon, color: Colors.blueAccent)
               : null,
 
           border: OutlineInputBorder(

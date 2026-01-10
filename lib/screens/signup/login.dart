@@ -18,7 +18,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   LoginController getController = LoginController();
   bool isLoading = false;
-
+  bool obscureText = true;
   // googleSignIn() async {
   //   String clientId =
   //       '879448455612-su8rdbnovc10id3irdfhh163v8cieohh.apps.googleusercontent.com';
@@ -98,6 +98,8 @@ class _LoginState extends State<Login> {
                     controller: getController.passwordController,
                     obscureText: true,
                     prefixIcon: Icons.remove_red_eye,
+                    
+                    
                   ),
                   SizedBox(height: 35.h),
                   CustomButton(
@@ -144,20 +146,20 @@ class _LoginState extends State<Login> {
                   //           });
                   //         },
                   //       ),
-                  SizedBox(height: 25.h),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30.w,
-                        vertical: 12.h,
-                      ),
-                    ),
-                    child: Text(
-                      "Continue with goggle",
-                      style: TextStyle(fontSize: 16.sp),
-                    ),
-                  ),
+                  // SizedBox(height: 25.h),
+                  // ElevatedButton(
+                  //   onPressed: () {},
+                  //   style: ElevatedButton.styleFrom(
+                  //     padding: EdgeInsets.symmetric(
+                  //       horizontal: 30.w,
+                  //       vertical: 12.h,
+                  //     ),
+                  //   ),
+                  //   child: Text(
+                  //     "Continue with goggle",
+                  //     style: TextStyle(fontSize: 16.sp),
+                  //   ),
+                  // ),
                   SizedBox(height: 20.h),
                   Column(
                     children: [
@@ -170,11 +172,23 @@ class _LoginState extends State<Login> {
                             ),
                           );
                         },
-                        child: Text(
-                          "Forgot Password?",
-                          style: TextStyle(fontSize: 14.sp),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 5.h,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
                         ),
                       ),
+
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -183,9 +197,24 @@ class _LoginState extends State<Login> {
                           );
                         },
                         child: Center(
-                          child: Text(
-                            "Don't have an account? Sign Up",
-                            style: TextStyle(fontSize: 14.sp),
+                          child: Text.rich(
+                            TextSpan(
+                              text: "Don't have an account? ",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.black,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: "Sign Up",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.blueAccent,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

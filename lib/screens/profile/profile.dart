@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/profile_menu_item.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
@@ -22,7 +21,10 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text(
+          "Profile",
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
@@ -43,7 +45,7 @@ class _ProfileState extends State<Profile> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircleAvatar(
-                  radius: 20,
+                  radius: 20.r,
                   child: CircularProgressIndicator(color: Colors.white),
                 );
               }
@@ -59,7 +61,7 @@ class _ProfileState extends State<Profile> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CircleAvatar(
-                      radius: 80,
+                      radius: 80.r,
                       backgroundColor: Colors.white,
                       backgroundImage:
                           (usersData['profileImagePath'] != null &&
@@ -72,29 +74,29 @@ class _ProfileState extends State<Profile> {
                           ? Icon(Icons.person)
                           : null,
                     ),
-                    const SizedBox(height: 15),
+                     SizedBox(height: 15.h),
 
                     //  Username
                     Text(
                       usersData['username'] ?? "No Name",
-                      style: const TextStyle(
-                        fontSize: 22,
+                      style:  TextStyle(
+                        fontSize: 22.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 6),
+                    SizedBox(height: 6.h),
 
                     // email
                     Text(
                       usersData['email'] ?? "No Email",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 25),
+                    SizedBox(height: 25.h),
 
                     Column(
                       children: [
@@ -113,9 +115,9 @@ class _ProfileState extends State<Profile> {
                         ),
                         Divider(
                           color: Colors.white30,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
+                          thickness: 1.h,
+                          indent: 20.w,
+                          endIndent: 20.w,
                         ),
 
                         ProfileMenuItem(
@@ -127,9 +129,9 @@ class _ProfileState extends State<Profile> {
                         ),
                         Divider(
                           color: Colors.white30,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
+                          thickness: 1.h,
+                          indent: 20.w,
+                          endIndent: 20.w,
                         ),
 
                         ProfileMenuItem(
@@ -140,9 +142,9 @@ class _ProfileState extends State<Profile> {
                         ),
                         Divider(
                           color: Colors.white30,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
+                          thickness: 1.h,
+                          indent: 20.w,
+                          endIndent: 20.w,
                         ),
 
                         ProfileMenuItem(
@@ -154,9 +156,9 @@ class _ProfileState extends State<Profile> {
                         ),
                         Divider(
                           color: Colors.white30,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
+                          thickness: 1.h,
+                          indent: 20.w,
+                          endIndent: 20.w,
                         ),
 
                         ProfileMenuItem(
@@ -166,37 +168,104 @@ class _ProfileState extends State<Profile> {
                           title: "Payment",
                           onTap: () {},
                         ),
-                        SizedBox(height: 10.h),
                         Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: 20.w,
                             vertical: 20.h,
                           ),
-                          child: CustomButton(
-                            text: "Sign Out",
-                           onPressed: () async {
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () async {
                                     await FirebaseAuth.instance.signOut();
                                     if (!context.mounted) return;
                                     Navigator.pushAndRemoveUntil(
                                       context,
-                                      MaterialPageRoute(builder: (context) => Login()),
+                                      MaterialPageRoute(
+                                        builder: (context) => Login(),
+                                      ),
                                       (route) => false,
                                     );
                                   },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 15.h,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Sign Out",
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 15.w),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 15.h,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "Edit Profile",
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+
                         // SizedBox(height: 10.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 10.h,
-                          ),
-                          child: CustomButton(
-                            text: "Edit Profile",
-                            backgroundColor: Colors.red,
-                            onPressed: () {},
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //     horizontal: 20.w,
+                        //     vertical: 20.h,
+                        //   ),
+                        //   child: CustomButton(
+                        //     text: "Sign Out",
+                        //     onPressed: () async {
+                        //       await FirebaseAuth.instance.signOut();
+                        //       if (!context.mounted) return;
+                        //       Navigator.pushAndRemoveUntil(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //           builder: (context) => Login(),
+                        //         ),
+                        //         (route) => false,
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //     horizontal: 20.w,
+                        //     vertical: 10.h,
+                        //   ),
+                        //   child: CustomButton(
+                        //     text: "Edit Profile",
+                        //     backgroundColor: Colors.red,
+                        //     onPressed: () {},
+                        //   ),
+                        // ),
 
                         //                        Padding(
                         //   padding: EdgeInsets.symmetric(

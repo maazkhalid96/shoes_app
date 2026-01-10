@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SliderBanner extends StatelessWidget {
   final String title;
@@ -6,6 +7,7 @@ class SliderBanner extends StatelessWidget {
   final String collection;
   final String imagePath;
   final VoidCallback callback;
+
   const SliderBanner({
     super.key,
     required this.title,
@@ -18,50 +20,51 @@ class SliderBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
-      width: 350,
+      height: 250.h,
+      width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         color: Colors.blue.shade100,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(title, style: TextStyle(fontSize: 30)),
-                  Text(subTitle, style: TextStyle(fontSize: 22)),
-                  Text(collection, style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 15),
-                  ElevatedButton(
-                    onPressed: callback,
-                    child: Text("Shop Now", style: TextStyle(fontSize: 18)),
-                  ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              flex: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.fitHeight,
-                  height: double.infinity,
+      child: Stack(
+        children: [
+          /// TEXT CONTENT
+          Padding(
+            padding:  EdgeInsets.all(20.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.bold),
                 ),
-              ),
+                Text(subTitle, style: TextStyle(fontSize: 20.sp)),
+                 SizedBox(height: 5.h),
+                Text(collection, style: TextStyle(fontSize: 16.sp)),
+                SizedBox(height: 15.h),
+                ElevatedButton(
+                  onPressed: callback,
+                  child: Text("Shop Now", style: TextStyle(fontSize: 16.sp),),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          Positioned(
+            right:-10.w,
+            bottom: 0,
+            top: 0,
+            child: Image.asset(
+              imagePath,
+
+              fit: BoxFit.contain, 
+              height: 250.h,
+              width: 250.w,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
-
