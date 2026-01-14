@@ -143,6 +143,7 @@ class _SignupState extends State<Signup> {
                       controller: getController.emailController,
                       hintText: "Enter Email",
                       prefixIcon: Icons.email_outlined,
+                    
                     ),
                     CustomInputField(
                       controller: getController.passwordController,

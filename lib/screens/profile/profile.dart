@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoes_app_ui/components/profile_menu_item.dart';
+import 'package:shoes_app_ui/screens/edit_profile/edit_profile.dart';
+import 'package:shoes_app_ui/screens/profile/address/address.dart';
+import 'package:shoes_app_ui/screens/profile/my_favorites/my_favorites.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
 
@@ -37,11 +40,11 @@ class _ProfileState extends State<Profile> {
               colors: [Color(0xFF1F1C2C), Color(0xFF928DAB)],
             ),
           ),
-          child: FutureBuilder<DocumentSnapshot>(
-            future: firestore
+          child: StreamBuilder(
+            stream: firestore
                 .collection("users")
                 .doc(auth.currentUser!.uid)
-                .get(),
+                .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircleAvatar(
@@ -74,12 +77,12 @@ class _ProfileState extends State<Profile> {
                           ? Icon(Icons.person)
                           : null,
                     ),
-                     SizedBox(height: 15.h),
+                    SizedBox(height: 15.h),
 
                     //  Username
                     Text(
                       usersData['username'] ?? "No Name",
-                      style:  TextStyle(
+                      style: TextStyle(
                         fontSize: 22.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -125,7 +128,14 @@ class _ProfileState extends State<Profile> {
                           iconColor: Colors.pink,
 
                           title: "Wishlist",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyFavorites(),
+                              ),
+                            );
+                          },
                         ),
                         Divider(
                           color: Colors.white30,
@@ -138,7 +148,14 @@ class _ProfileState extends State<Profile> {
                           icon: Icons.location_on,
                           title: "Address",
                           iconColor: Colors.green,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Address(),
+                              ),
+                            );
+                          },
                         ),
                         Divider(
                           color: Colors.white30,
@@ -211,7 +228,14 @@ class _ProfileState extends State<Profile> {
                               SizedBox(width: 15.w),
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EditProfile(),
+                                      ),
+                                    );
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
                                     padding: EdgeInsets.symmetric(
@@ -233,77 +257,6 @@ class _ProfileState extends State<Profile> {
                             ],
                           ),
                         ),
-
-                        // SizedBox(height: 10.h),
-                        // Padding(
-                        //   padding: EdgeInsets.symmetric(
-                        //     horizontal: 20.w,
-                        //     vertical: 20.h,
-                        //   ),
-                        //   child: CustomButton(
-                        //     text: "Sign Out",
-                        //     onPressed: () async {
-                        //       await FirebaseAuth.instance.signOut();
-                        //       if (!context.mounted) return;
-                        //       Navigator.pushAndRemoveUntil(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //           builder: (context) => Login(),
-                        //         ),
-                        //         (route) => false,
-                        //       );
-                        //     },
-                        //   ),
-                        // ),
-                        // Padding(
-                        //   padding: EdgeInsets.symmetric(
-                        //     horizontal: 20.w,
-                        //     vertical: 10.h,
-                        //   ),
-                        //   child: CustomButton(
-                        //     text: "Edit Profile",
-                        //     backgroundColor: Colors.red,
-                        //     onPressed: () {},
-                        //   ),
-                        // ),
-
-                        //                        Padding(
-                        //   padding: EdgeInsets.symmetric(
-                        //     horizontal: 20.w, // responsive horizontal padding
-                        //     vertical: 20.h,   // responsive vertical padding
-                        //   ),
-                        //   child: Row(
-                        //     children: [
-                        //       Expanded(
-                        //         child: CustomButton(
-                        //           text: "Sign Out",
-                        //           onPressed: () async {
-                        //             await FirebaseAuth.instance.signOut();
-                        //             if (!context.mounted) return;
-                        //             Navigator.pushAndRemoveUntil(
-                        //               context,
-                        //               MaterialPageRoute(builder: (context) => Login()),
-                        //               (route) => false,
-                        //             );
-                        //           },
-                        //           backgroundColor: Colors.redAccent,
-                        //           height: 50.h,  // responsive height
-                        //           textColor: Colors.white,
-                        //         ),
-                        //       ),
-                        //       SizedBox(width: 8.w), // responsive spacing
-                        //       Expanded(
-                        //         child: CustomButton(
-                        //           text: "Edit Profile",
-                        //           onPressed: () {},
-                        //           backgroundColor: Colors.blueAccent,
-                        //           height: 50.h,
-                        //           textColor: Colors.white,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                       ],
                     ),
                   ],

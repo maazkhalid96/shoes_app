@@ -20,7 +20,7 @@ class CloudinaryService {
     if (response.statusCode == 200) {
       final res = await response.stream.bytesToString();
       final data = jsonDecode(res);
-      return data['secure_url']; // Cloudinary image URL
+      return data['secure_url']; 
     } else {
       return Future.error("Upload failed: ${response.statusCode}");
     }

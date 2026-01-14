@@ -51,7 +51,7 @@ class _CartsDataState extends State<CartsData> {
       ),
 
       // TOTAL + CHECKOUT IN ONE ROW
-      bottomNavigationBar: StreamBuilder<QuerySnapshot>(
+      bottomNavigationBar: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection("carts")
             .doc(uid)
@@ -139,11 +139,11 @@ class _CartsDataState extends State<CartsData> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return  Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
+                  return  Center(
                     child: Text(
                       "No items in cart",
                       style: TextStyle(fontSize: 18),
