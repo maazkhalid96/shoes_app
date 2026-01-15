@@ -32,7 +32,7 @@ class OrderDetail extends StatelessWidget {
         stream: FirebaseFirestore.instance
             .collection("orders")
             .doc(orderId)
-            .snapshots(), // Firestore stream for real-time updates
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -88,11 +88,7 @@ class OrderDetail extends StatelessWidget {
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),
-                        // const SizedBox(height: 8),
-                        // Text(
-                        //   "Estimated Delivery: ${orderData['estimatedDelivery'] != null ? (orderData['estimatedDelivery'] as dynamic).toDate().toString().split(' ')[0] : 'N/A'}",
-                        //   style: TextStyle(color: Colors.grey[700]),
-                        // ),
+                     
                       ],
                     ),
                   ),

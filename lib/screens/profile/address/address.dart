@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 
@@ -65,12 +66,11 @@ class _AddressState extends State<Address> {
       var data = address.data()!;
 
       setState(() {
-        
-      nameController.text = data["name"] ?? '';
-      phoneController.text = data["phone"] ?? '';
-      streetController.text = data["street"] ?? '';
-      cityController.text = data["city"] ?? '';
-      zipController.text = data["zipcode"] ?? '';
+        nameController.text = data["name"] ?? '';
+        phoneController.text = data["phone"] ?? '';
+        streetController.text = data["street"] ?? '';
+        cityController.text = data["city"] ?? '';
+        zipController.text = data["zipcode"] ?? '';
       });
     }
   }
@@ -91,6 +91,7 @@ class _AddressState extends State<Address> {
               CustomInputField(
                 hintText: "Phone",
                 controller: phoneController,
+                textInputType: TextInputType.number,
                 inputFormatter: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(11),
@@ -112,43 +113,38 @@ class _AddressState extends State<Address> {
               CustomButton(
                 isLoading: isLoading,
                 text: "Save Address",
-                width: 230,
+                width: 230.w,
                 onPressed: () async {
                   setState(() {
                     isLoading = true;
                   });
-                  if (nameController.text.isEmpty ||
-                      phoneController.text.isEmpty ||
-                      streetController.text.isEmpty ||
-                      cityController.text.isEmpty ||
-                      zipController.text.isEmpty) {
+                  if (phoneController.text.isNotEmpty &&
+                      phoneController.text.length != 11) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Please fill all fields"),
+                        content: Text("Phone number must be exactly 11 digits"),
                         backgroundColor: Colors.red,
                       ),
                     );
+                    setState(() {
+                      isLoading = false;
+                    });
                     return;
                   }
-                  if (phoneController.text.length != 11) {
+                  if (zipController.text.isNotEmpty &&
+                      zipController.text.length != 5) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Enter a valid 11-digit phone number"),
+                        content: Text("Postal code must be 5 digits"),
                         backgroundColor: Colors.red,
                       ),
                     );
+                    setState(() {
+                      isLoading = false;
+                    });
                     return;
                   }
-                  if (zipController.text.length != 5 &&
-                      zipController.text.length != 6) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Enter a valid postal code"),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
+
                   await savedAddress();
                   setState(() {
                     isLoading = false;

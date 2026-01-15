@@ -143,13 +143,13 @@ class AdminOrderDetail extends StatelessWidget {
                             : () async {
                                 String status = order["status"];
 
-                                if (status == "pending") {
+                                if (status == "Pending") {
                                   status = "Shipped";
                                 } else if (status == "Shipped") {
                                   status = "Delivered";
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text("Order already delivered"),
                                     ),
                                   );
@@ -162,8 +162,8 @@ class AdminOrderDetail extends StatelessWidget {
                                 if (!context.mounted) return;
 
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Status Updated to"),
+                                  SnackBar(
+                                    content: Text("Status Updated to $status"),
                                   ),
                                 );
                               },
