@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/services/auth_forgot_password.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -33,7 +34,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () async {
+                    onPressed: () async {  
+                      ///   interNet Connection check
+                      bool hasInternet = await checkInternet(context);
+                      if (!hasInternet) return;
                       if (emailController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Enter your email")),

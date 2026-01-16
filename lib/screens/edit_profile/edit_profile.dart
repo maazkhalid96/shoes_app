@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/services/cloudinary_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
-import 'package:shoes_app_ui/components/custom_input_fields.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -97,6 +97,9 @@ class _EditProfileState extends State<EditProfile> {
                     isLoading: isLoading,
                     text: "Profile Update",
                     onPressed: () async {
+                       //// check internet connection
+                          bool hasInternet = await checkInternet(context);
+                          if (!hasInternet) return;
                       setState(() {
                         isLoading = true;
                       });

@@ -12,7 +12,20 @@
           "package_name": "com.example.shoes_app_ui"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "879448455612-hr9h4h5vldkhgthiqhdsa0s8eudpmaah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shoes_app_ui",
+            "certificate_hash": "7216f992001eabd38df3533b38223ee49db72893"
+          }
+        },
+        {
+          "client_id": "879448455612-su8rdbnovc10id3irdfhh163v8cieohh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAFM9GGr-M0IH-trNeKVej-lwbyp8CB8lo"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879448455612-ehoaq5bi03a80gfqego44p8s2i87a9d4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

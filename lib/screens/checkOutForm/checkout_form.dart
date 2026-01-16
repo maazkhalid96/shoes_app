@@ -7,6 +7,7 @@ import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/screens/checkoutform/order_success_screen.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 
 class CheckoutForm extends StatefulWidget {
   const CheckoutForm({super.key});
@@ -296,6 +297,9 @@ class _CheckoutFormState extends State<CheckoutForm> {
               text: "Place Order",
               isLoading: isLoading,
               onPressed: () async {
+                //// check internet connection
+                bool hasInternet = await checkInternet(context);
+                if (!hasInternet) return;
                 if (nameController.text.isEmpty ||
                     phoneController.text.isEmpty ||
                     addressController.text.isEmpty ||

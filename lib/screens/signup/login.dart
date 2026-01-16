@@ -6,6 +6,7 @@ import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/controller.dart';
 import 'package:shoes_app_ui/screens/forgotPassword/forgot_password.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
 class Login extends StatefulWidget {
@@ -19,18 +20,6 @@ class _LoginState extends State<Login> {
   LoginController getController = LoginController();
   bool isLoading = false;
   bool obscureText = true;
-  // googleSignIn() async {
-  //   String clientId =
-  //       '879448455612-su8rdbnovc10id3irdfhh163v8cieohh.apps.googleusercontent.com';
-  //   try {
-  //     GoogleSignIn signIn = GoogleSignIn.instance;
-
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text(e.toString())));
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,14 +87,15 @@ class _LoginState extends State<Login> {
                     controller: getController.passwordController,
                     obscureText: true,
                     prefixIcon: Icons.remove_red_eye,
-                    
-                    
                   ),
                   SizedBox(height: 35.h),
                   CustomButton(
                     text: "Log in",
                     isLoading: isLoading,
                     onPressed: () async {
+                      bool hasInternet = await checkInternet(context);
+
+                      if (!hasInternet) return;
                       setState(() => isLoading = true);
 
                       await Future.delayed(const Duration(milliseconds: 50));

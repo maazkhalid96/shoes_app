@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 
 class Address extends StatefulWidget {
   const Address({super.key});
@@ -115,6 +116,9 @@ class _AddressState extends State<Address> {
                 text: "Save Address",
                 width: 230.w,
                 onPressed: () async {
+                  bool hasIntenet = await checkInternet(context);
+                  if (!hasIntenet) return;
+
                   setState(() {
                     isLoading = true;
                   });

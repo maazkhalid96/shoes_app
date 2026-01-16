@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 
 class AdminOrderDetail extends StatelessWidget {
   final String orderId;
@@ -118,6 +119,9 @@ class AdminOrderDetail extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                         onPressed: () async {
+                          //// check internet connection
+                          bool hasInternet = await checkInternet(context);
+                          if (!hasInternet) return;
                           await FirebaseFirestore.instance
                               .collection("orders")
                               .doc(orderId)
@@ -141,6 +145,9 @@ class AdminOrderDetail extends StatelessWidget {
                         onPressed: order["status"] == "Cancelled"
                             ? null
                             : () async {
+                               //// check internet connection
+                          bool hasInternet = await checkInternet(context);
+                          if (!hasInternet) return;
                                 String status = order["status"];
 
                                 if (status == "Pending") {

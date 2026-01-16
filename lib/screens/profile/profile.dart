@@ -9,6 +9,7 @@ import 'package:shoes_app_ui/screens/profile/my_favorites/my_favorites.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/my_order_screen.dart';
 import 'package:shoes_app_ui/screens/profile/payment_method/payment_method.dart';
 import 'package:shoes_app_ui/screens/profile/profile_settings/profile_settings.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/screens/signup/login.dart';
 
 class Profile extends StatefulWidget {
@@ -210,6 +211,9 @@ class _ProfileState extends State<Profile> {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: () async {
+                                 //// check internet connection
+                          bool hasInternet = await checkInternet(context);
+                          if (!hasInternet) return;
                                 await FirebaseAuth.instance.signOut();
                                 if (!context.mounted) return;
                                 Navigator.pushAndRemoveUntil(

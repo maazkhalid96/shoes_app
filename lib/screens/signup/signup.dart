@@ -8,6 +8,7 @@ import 'package:shoes_app_ui/auth/signup_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/signup_controller.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -143,7 +144,6 @@ class _SignupState extends State<Signup> {
                       controller: getController.emailController,
                       hintText: "Enter Email",
                       prefixIcon: Icons.email_outlined,
-                    
                     ),
                     CustomInputField(
                       controller: getController.passwordController,
@@ -157,6 +157,9 @@ class _SignupState extends State<Signup> {
                       text: "Sign up",
                       isLoading: isLoading,
                       onPressed: () async {
+                        /// check IInternet connection
+                        bool hasInternet = await checkInternet(context);
+                        if (!hasInternet) return;
                         setState(() {
                           isLoading = true;
                         });

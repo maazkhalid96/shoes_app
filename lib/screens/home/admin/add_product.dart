@@ -7,6 +7,7 @@ import 'package:shoes_app_ui/components/custom_button.dart';
 
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/add_product_controller.dart';
+import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/services/cloudinary_service.dart';
 
 class AddProduct extends StatefulWidget {
@@ -184,6 +185,9 @@ class _AddProductState extends State<AddProduct> {
                   text: "Add Product",
                   isLoading: isLoading,
                   onPressed: () async {
+                    /// check internet connection
+                    bool hasInternet = await checkInternet(context);
+                    if (!hasInternet) return;
                     setState(() {
                       isLoading = true;
                     });
@@ -193,7 +197,6 @@ class _AddProductState extends State<AddProduct> {
                     });
                   },
                 ),
-
               ],
             ),
           ],
