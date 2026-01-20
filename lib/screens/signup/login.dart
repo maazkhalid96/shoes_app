@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shoes_app_ui/auth/login_auth.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/controller.dart';
 import 'package:shoes_app_ui/screens/forgotPassword/forgot_password.dart';
+import 'package:shoes_app_ui/screens/home/home.dart';
 import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
 import 'package:shoes_app_ui/screens/signup/signup.dart';
 
@@ -208,6 +212,45 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
+                      SizedBox(height: 10),
+                      // CustomButton(
+                      //   text: "Continue Google",
+                      //   width: 180.w,
+                      //   onPressed: () async {
+                      //     try {
+                      //       final GoogleSignIn googleSign = GoogleSignIn();
+                      //       final GoogleSignInAccount? googleUser =
+                      //           await googleSign.signIn();
+
+                      //       if (googleUser == null) return;
+
+                      //       final GoogleSignInAuthentication googleAuth =
+                      //           await googleUser.authentication;
+
+                      //       final credential = GoogleAuthProvider.credential(
+                      //         accessToken: googleAuth.accessToken,
+                      //         idToken: googleAuth.idToken,
+                      //       );
+
+                      //       UserCredential userCredential = await FirebaseAuth
+                      //           .instance
+                      //           .signInWithCredential(credential);
+
+                      //       await FirebaseFirestore.instance
+                      //           .collection("users")
+                      //           .doc(userCredential.user!.uid)
+                      //           .set({
+                      //             "uid": userCredential.user!.uid,
+                      //             "name" : userCredential.user!.displayName,
+                      //             "email" : userCredential.user!.email,
+                      //             "image" : userCredential.user!.photoURL,
+                                  
+                      //             }, SetOptions(merge: true));
+                      //     } catch (e) {
+                      //       print(e);
+                      //     }
+                      //   },
+                      // ),
                     ],
                   ),
                 ],

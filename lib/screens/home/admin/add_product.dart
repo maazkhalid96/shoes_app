@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
-
 import 'package:shoes_app_ui/components/custom_input_fields.dart';
 import 'package:shoes_app_ui/controller/add_product_controller.dart';
 import 'package:shoes_app_ui/screens/signup/internet_issue.dart';
@@ -22,26 +21,28 @@ class _AddProductState extends State<AddProduct> {
   String? selectedCategory;
   bool isLoading = false;
   File? imageFilee;
+
   List<String> categories = ["Men Shoes", "Women Shoes", "Kids Shoes"];
 
   // Pick image from gallery
-  pickImage() async {
-    final pick = await ImagePicker().pickImage(source: ImageSource.gallery);
+  Future<void> pickImage() async {
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (!mounted) return;
-    if (pick == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("No image selected")));
-    } else {
-      setState(() {
-        imageFilee = File(pick.path);
-      });
+
+    if (picked == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No image selected")),
+      );
+      return;
     }
+
+    setState(() {
+      imageFilee = File(picked.path);
+    });
   }
 
   // Add product to Firestore
-  addProduct() async {
-    // Check all fields including image
+  Future<void> addProduct() async {
     if (getController.productName.text.isEmpty ||
         getController.price.text.isEmpty ||
         getController.category.text.isEmpty ||
@@ -50,33 +51,21 @@ class _AddProductState extends State<AddProduct> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("All fields are required including image!")),
       );
-      return; // Stop execution
+      return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
-    String? imageUrl;
+    setState(() => isLoading = true);
 
     try {
-      imageUrl = await CloudinaryService.uploadImage(imageFilee!);
+      String? imageUrl = await CloudinaryService.uploadImage(imageFilee!);
       if (imageUrl == null) {
         setState(() => isLoading = false);
-        if (!mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("Image upload failed")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Image upload failed")),
+        );
         return;
       }
-    } catch (e) {
-      if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Something went wrong")));
-    }
-
-    try {
       await FirebaseFirestore.instance.collection("products").add({
         "name": getController.productName.text,
         "price": int.parse(getController.price.text),
@@ -85,11 +74,10 @@ class _AddProductState extends State<AddProduct> {
         "image": imageUrl,
         "createdAt": DateTime.now(),
       });
-      if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Product added successfully!")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Product added successfully!")),
+      );
 
       // Clear fields
       getController.productName.clear();
@@ -102,13 +90,10 @@ class _AddProductState extends State<AddProduct> {
         isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: $e")));
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
     }
   }
 
@@ -116,39 +101,54 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              "Add New Product",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 25),
+
+            // Product Name
             CustomInputField(
               hintText: "Product Name",
               controller: getController.productName,
             ),
-            SizedBox(height: 12),
+            SizedBox(height: 15),
+
+            // Price
             CustomInputField(
               hintText: "Price",
               textInputType: TextInputType.number,
-
               controller: getController.price,
             ),
-            SizedBox(height: 12),
+            SizedBox(height: 15),
+
+            // Category Dropdown
             DropdownButtonFormField<String>(
               value: selectedCategory,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-
                   borderSide: BorderSide.none,
                 ),
-
                 hintText: "Select Category",
               ),
-              items: categories.map((cat) {
-                return DropdownMenuItem(value: cat, child: Text(cat));
-              }).toList(),
+              items: categories
+                  .map((cat) => DropdownMenuItem(
+                        value: cat,
+                        child: Text(cat),
+                      ))
+                  .toList(),
               onChanged: (value) {
                 setState(() {
                   selectedCategory = value;
@@ -156,48 +156,42 @@ class _AddProductState extends State<AddProduct> {
                 });
               },
             ),
+            SizedBox(height: 15),
 
-            SizedBox(height: 12),
+            // Description
             CustomInputField(
               hintText: "Description",
               controller: getController.description,
               maxline: 5,
             ),
-            SizedBox(height: 12),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: pickImage,
-                  child: CircleAvatar(
-                    radius: 65,
-                    backgroundColor: Colors.amber,
-                    backgroundImage: imageFilee != null
-                        ? FileImage(imageFilee!)
-                        : null,
-                    child: imageFilee == null
-                        ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
-                        : null,
-                  ),
+            SizedBox(height: 20),
+
+            // Image Picker
+            Center(
+              child: GestureDetector(
+                onTap: pickImage,
+                child: CircleAvatar(
+                  radius: 65,
+                  backgroundColor: Colors.blue.shade200,
+                  backgroundImage:
+                      imageFilee != null ? FileImage(imageFilee!) : null,
+                  child: imageFilee == null
+                      ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
+                      : null,
                 ),
-                SizedBox(height: 15),
-                CustomButton(
-                  text: "Add Product",
-                  isLoading: isLoading,
-                  onPressed: () async {
-                    /// check internet connection
-                    bool hasInternet = await checkInternet(context);
-                    if (!hasInternet) return;
-                    setState(() {
-                      isLoading = true;
-                    });
-                    await addProduct();
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                ),
-              ],
+              ),
+            ),
+            SizedBox(height: 25),
+
+            // Add Product Button
+            CustomButton(
+              text: "Add Product",
+              isLoading: isLoading,
+              onPressed: () async {
+                bool hasInternet = await checkInternet(context);
+                if (!hasInternet) return;
+                await addProduct();
+              },
             ),
           ],
         ),

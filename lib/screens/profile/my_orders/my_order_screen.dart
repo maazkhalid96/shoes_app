@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/order_detail.dart';
 
 class MyOrderScreen extends StatelessWidget {
@@ -21,6 +22,10 @@ class MyOrderScreen extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+
+  bool canCancel(String status) {
+    return status == "Pending" || status == "Shipped";
   }
 
   @override
@@ -64,8 +69,11 @@ class MyOrderScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                    //   SizedBox(height: 10,),
+                    // CustomButton(text: "Cancel Order",width: 200,height: 40, onPressed: (){})
                     ],
                   ),
+
                   trailing: Icon(Icons.arrow_forward_ios),
                   onTap: () {
                     Navigator.push(
