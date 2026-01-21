@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/components/slider_banner.dart';
 import 'package:shoes_app_ui/screens/carts/carts_data.dart';
 import 'package:shoes_app_ui/screens/detail/product_detail.dart';
 import 'package:shoes_app_ui/screens/home/favorite/product_favorite.dart';
 import 'package:shoes_app_ui/screens/profile/profile.dart';
-import 'package:shoes_app_ui/screens/signup/login.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,6 +19,7 @@ int currentPage = 0;
 
 class _HomeState extends State<Home> {
   TextEditingController searchController = TextEditingController();
+
   String searchText = "";
   Map<String, bool> favoriteStatus = {};
   final FirebaseAuth auth = FirebaseAuth.instance;

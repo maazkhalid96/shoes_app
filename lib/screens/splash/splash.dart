@@ -20,14 +20,12 @@ class _SplashState extends State<Splash> {
       setState(() => fadeOut = true);
     });
 
-
     Future.delayed(const Duration(seconds: 3), () {
-      if(!mounted) return;
-  Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => Login()),
-        );
-
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => Login()),
+      );
     });
   }
 
@@ -56,15 +54,15 @@ class _SplashState extends State<Splash> {
                       BoxShadow(color: Colors.black26, blurRadius: 20),
                     ],
                   ),
-                  child:  CircleAvatar(
+                  child: CircleAvatar(
                     radius: 120.w,
                     backgroundImage: AssetImage("assets/images/banner.jpg"),
                   ),
                 ),
-          
-                 SizedBox(height: 30.h),
-          
-                 Text(
+
+                SizedBox(height: 30.h),
+
+                Text(
                   "Welcome to Shoes Shop",
                   style: TextStyle(
                     color: Colors.white,
@@ -73,10 +71,10 @@ class _SplashState extends State<Splash> {
                     letterSpacing: 1.2,
                   ),
                 ),
-          
-                 SizedBox(height: 10.h),
-          
-                 Text(
+
+                SizedBox(height: 10.h),
+
+                Text(
                   "Comfort • Quality • Style",
                   style: TextStyle(
                     color: Colors.white70,

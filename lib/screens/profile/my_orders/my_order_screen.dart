@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/screens/profile/my_orders/order_detail.dart';
 
 class MyOrderScreen extends StatelessWidget {

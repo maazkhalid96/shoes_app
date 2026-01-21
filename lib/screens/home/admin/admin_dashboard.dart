@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/custom_button.dart';
 import 'package:shoes_app_ui/screens/home/admin/add_product.dart';
 import 'package:shoes_app_ui/screens/home/admin/admin_order_screen.dart';
+import 'package:shoes_app_ui/screens/home/admin/all_users.dart';
 import 'package:shoes_app_ui/screens/home/admin/build_dashboard_cards.dart';
 import 'package:shoes_app_ui/screens/home/admin/get_product.dart';
 import 'package:shoes_app_ui/screens/home/home.dart';
@@ -16,6 +18,44 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   Widget? screen;
+  int totalProduct = 0;
+  int totalOrders = 0;
+  int totalUsers = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getAllProducts();
+    getAllOrders();
+    getAllUsers();
+  }
+
+  // Fetch total products
+  getAllProducts() async {
+    var snapshot = await FirebaseFirestore.instance
+        .collection("products")
+        .get();
+    setState(() {
+      totalProduct = snapshot.docs.length;
+    });
+  }
+
+  // Fetch total orders
+  getAllOrders() async {
+    var snapshot = await FirebaseFirestore.instance.collection("orders").get();
+    setState(() {
+      totalOrders = snapshot.docs.length;
+    });
+  }
+
+  //// Fetch Total Users
+  getAllUsers() async {
+    var snapshot = await FirebaseFirestore.instance.collection("users").get();
+
+    setState(() {
+      totalUsers = snapshot.docs.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +72,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.blue.shade400),
         elevation: 0,
+        leading: screen != null
+            ? IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.blue.shade400),
+                onPressed: () {
+                  setState(() {
+                    screen = null;
+                  });
+                },
+              )
+            : null,
       ),
       drawer: Drawer(
         backgroundColor: Colors.blue.shade200,
@@ -55,15 +105,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
               title: Text(
                 "Add Product",
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               onTap: () {
                 setState(() {
                   screen = AddProduct();
                 });
-                Navigator.pop(context);
               },
             ),
             Divider(),
@@ -72,15 +122,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
               title: Text(
                 "Get Product",
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               onTap: () {
                 setState(() {
                   screen = GetProduct();
                 });
-                Navigator.pop(context);
               },
             ),
             Divider(),
@@ -89,15 +139,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
               title: Text(
                 "All Orders",
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               onTap: () {
                 setState(() {
                   screen = AdminOrdersScreen();
                 });
-                Navigator.pop(context);
               },
             ),
             Divider(),
@@ -106,15 +156,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
               title: Text(
                 "Home Page",
                 style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Home()),
-                );
+                setState(() {
+                  screen = Home();
+                });
               },
             ),
             Spacer(),
@@ -123,10 +173,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 text: "Login",
                 width: 150,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                  );
+                  setState(() {
+                    screen = Login();
+                  });
                 },
               ),
             ),
@@ -138,10 +187,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-
+  // Dashboard view
   Widget buildDashboard() {
-    return Container(
-      color: Colors.blue.shade50,
+    return SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,9 +197,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
           Text(
             "Welcome, Admin!",
             style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700),
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade700,
+            ),
           ),
           SizedBox(height: 10),
           Text(
@@ -160,60 +209,89 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
           SizedBox(height: 25),
 
-          // Two rows with 2 cards each
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    BuildDashboardCards(
-                      title: "Add Product",
-                      icon: Icons.add_box,
-                      color: Colors.blue.shade400,
-                      onTap: () {
-                        setState(() {
-                          screen = AddProduct();
-                        });
-                      },
-                    ),
-                    BuildDashboardCards(
-                      title: "Get Product",
-                      icon: Icons.shopping_bag,
-                      color: Colors.green.shade400,
-                      onTap: () {
-                        setState(() {
-                          screen = GetProduct();
-                        });
-                      },
-                    ),
-                  ],
+          // Row 1
+          Row(
+            children: [
+              Expanded(
+                child: BuildDashboardCards(
+                  title: "Add Product",
+                  icon: Icons.add_box,
+                  color: Colors.blue.shade400,
+                  onTap: () {
+                    setState(() {
+                      screen = AddProduct();
+                    });
+                  },
                 ),
-                Row(
-                  children: [
-                    BuildDashboardCards(
-                      title: "All Orders",
-                      icon: Icons.receipt_long,
-                      color: Colors.orange.shade400,
-                      onTap: () {
-                        setState(() {
-                          screen = AdminOrdersScreen();
-                        });
-                      },
-                    ),
-                    BuildDashboardCards(
-                      title: "Home Page",
-                      icon: Icons.home,
-                      color: Colors.purple.shade400,
-                      onTap: () {
-                        setState(() {
-                          screen = Home();
-                        });
-                      },
-                    ),
-                  ],
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: BuildDashboardCards(
+                  title: "Get Product",
+                  subtitle: "Total Products: $totalProduct",
+                  icon: Icons.shopping_bag,
+                  color: Colors.green.shade400,
+                  onTap: () {
+                    setState(() {
+                      screen = GetProduct();
+                    });
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+
+          // Row 2
+          Row(
+            children: [
+              Expanded(
+                child: BuildDashboardCards(
+                  title: "All Orders",
+                  subtitle: "Total Orders: $totalOrders",
+                  icon: Icons.receipt_long,
+                  color: Colors.orange.shade400,
+                  onTap: () {
+                    setState(() {
+                      screen = AdminOrdersScreen();
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: BuildDashboardCards(
+                  title: "All Users",
+                  subtitle: "Total Users: $totalUsers",
+                  icon: Icons.person,
+                  color: Colors.purple.shade400,
+                  onTap: () {
+                    setState(() {
+                      screen = AllUsers();
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+
+          // Row 3
+          Row(
+            children: [
+              Expanded(
+                child: BuildDashboardCards(
+                  title: "Home Page",
+                  icon: Icons.home,
+                  color: Colors.teal.shade400,
+                  onTap: () {
+                    setState(() {
+                      screen = Home();
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
