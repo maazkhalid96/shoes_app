@@ -34,9 +34,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             isLoading
                 ? CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () async {  
+                    onPressed: () async {
                       ///   interNet Connection check
                       bool hasInternet = await checkInternet(context);
+                      if (!context.mounted) return;
                       if (!hasInternet) return;
                       if (emailController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(

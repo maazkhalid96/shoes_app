@@ -14,7 +14,7 @@ class _CartsDataState extends State<CartsData> {
   final String uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoaderProceesing = false;
 
-  Future<void> increaseQty(String cartId, Map item) async {
+  increaseQty(String cartId, Map item) async {
     int qty = item["quantity"];
     int price = item["price"];
 

@@ -170,7 +170,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Spacer(),
             Center(
               child: CustomButton(
-                text: "Login",
+                text: "Log Out",
                 width: 150,
                 onPressed: () {
                   setState(() {

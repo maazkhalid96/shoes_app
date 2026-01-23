@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class AllUsers extends StatelessWidget {
@@ -22,14 +21,30 @@ class AllUsers extends StatelessWidget {
           return ListView.builder(
             itemCount: users.length,
             itemBuilder: (context, index) {
-               var user = users[index].data() as Map<String, dynamic>;
+              var user = users[index].data() as Map<String, dynamic>? ?? {};
 
               return Card(
                 child: ListTile(
-                    leading: Icon(Icons.person),
+                  leading: Icon(Icons.person, color: Colors.blue),
                   title: Text(user['name'] ?? 'No Name'),
                   subtitle: Text(user['email'] ?? 'No Email'),
-                  trailing: Text(user['phone'] ?? ''),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(user['phone'] ?? ''),
+                      SizedBox(width: 10),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () async {
+                          var usersId = users[index];
+                          await FirebaseFirestore.instance
+                              .collection("users")
+                              .doc(usersId.id)      
+                              .delete();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

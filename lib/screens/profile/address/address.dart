@@ -122,6 +122,7 @@ class _AddressState extends State<Address> {
                   setState(() {
                     isLoading = true;
                   });
+                  if (!context.mounted) return;
                   if (phoneController.text.isNotEmpty &&
                       phoneController.text.length != 11) {
                     ScaffoldMessenger.of(context).showSnackBar(

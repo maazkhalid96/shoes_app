@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shoes_app_ui/screens/splash/splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shoes_app_ui/screens/splash/splash.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -19,9 +19,9 @@ class MyApp extends StatelessWidget {
       designSize: Size(375, 812),
       minTextAdapt: true,
       child: MaterialApp(
-        debugShowCheckedModeBanner: false, 
-        home: Splash(),
-        ),
+        debugShowCheckedModeBanner: false,
+        home: Splash()
+      ),
     );
   }
 }

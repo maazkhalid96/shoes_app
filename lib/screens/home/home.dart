@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shoes_app_ui/components/slider_banner.dart';
+
 import 'package:shoes_app_ui/screens/carts/carts_data.dart';
 import 'package:shoes_app_ui/screens/detail/product_detail.dart';
 import 'package:shoes_app_ui/screens/home/favorite/product_favorite.dart';
 import 'package:shoes_app_ui/screens/profile/profile.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -28,6 +30,33 @@ class _HomeState extends State<Home> {
 
   String selectedCategory = "All";
 
+  /// image shimmer image load se pehle shade
+
+  shimmerImage(String imageUrl) {
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+
+        return FutureBuilder(
+          future: Future.delayed(Duration(seconds: 2)),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey.shade300,
+                highlightColor: Colors.grey.shade100,
+                child: Container(color: Colors.grey),
+              );
+            }
+            return child;
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,15 +77,11 @@ class _HomeState extends State<Home> {
                   .doc(auth.currentUser!.uid)
                   .snapshots(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircleAvatar(
-                    radius: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
-                }
-
                 if (!snapshot.hasData || !snapshot.data!.exists) {
-                  return CircleAvatar(radius: 20, child: Icon(Icons.person));
+                  return const CircleAvatar(
+                    radius: 20,
+                    child: Icon(Icons.person),
+                  );
                 }
 
                 var usersData = snapshot.data!.data() as Map<String, dynamic>;
@@ -101,14 +126,53 @@ class _HomeState extends State<Home> {
             onPressed: () {},
             icon: Icon(Icons.search, color: Colors.blueAccent),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartsData()),
-              );
-            },
-            icon: Icon(Icons.shopping_cart),
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartsData()),
+                  );
+                },
+                icon: Icon(Icons.shopping_cart, color: Colors.blueAccent),
+              ),
+              // Badge
+              Positioned(
+                right: 6,
+                top: -2,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("carts")
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .collection("items")
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return SizedBox();
+                    }
+
+                    int totalItems = snapshot.data!.docs.length;
+
+                    return Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        "$totalItems",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -122,8 +186,8 @@ class _HomeState extends State<Home> {
                 controller: searchController,
                 decoration: InputDecoration(
                   fillColor: const Color.fromARGB(255, 245, 230, 230),
-                  hintText: "Search shoes",
                   filled: true,
+                  hintText: "Search Shoes...",
                   prefixIcon: Icon(Icons.search, color: Colors.blueAccent),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
@@ -320,11 +384,7 @@ class _HomeState extends State<Home> {
                                     top: Radius.circular(16),
                                   ),
                                   child: data["image"] != null
-                                      ? Image.network(
-                                          data["image"],
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        )
+                                      ? shimmerImage(data["image"])
                                       : Icon(
                                           Icons.image,
                                           size: 70,
@@ -410,19 +470,10 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       );
-                    },
+                    }
                   );
                 },
               ),
-              // CustomButton(
-              //   text: "cliask",
-              //   onPressed: () {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => Login()),
-              //     );
-              //   },
-              // ),
             ],
           ),
         ),

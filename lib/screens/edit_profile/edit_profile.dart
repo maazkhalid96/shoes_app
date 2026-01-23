@@ -97,13 +97,13 @@ class _EditProfileState extends State<EditProfile> {
                     isLoading: isLoading,
                     text: "Profile Update",
                     onPressed: () async {
-                       //// check internet connection
-                          bool hasInternet = await checkInternet(context);
-                          if (!hasInternet) return;
+                      //// check internet connection
+                      bool hasInternet = await checkInternet(context);
+                      if (!hasInternet) return;
                       setState(() {
                         isLoading = true;
                       });
-
+                      if (!context.mounted) return;
                       if (userNameController.text.trim().isEmpty ||
                           phoneController.text.trim().isEmpty) {
                         setState(() {

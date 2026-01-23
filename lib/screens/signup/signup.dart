@@ -163,6 +163,7 @@ class _SignupState extends State<Signup> {
                         setState(() {
                           isLoading = true;
                         });
+                        if (!context.mounted) return;
                         await SignupAuth().signUp(
                           email: getController.emailController.text,
                           password: getController.passwordController.text,

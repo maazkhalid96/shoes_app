@@ -145,10 +145,11 @@ class AdminOrderDetail extends StatelessWidget {
                         onPressed: order["status"] == "Cancelled"
                             ? null
                             : () async {
-                               //// check internet connection
-                          bool hasInternet = await checkInternet(context);
-                          if (!hasInternet) return;
+                                //// check internet connection
+                                bool hasInternet = await checkInternet(context);
+                                if (!hasInternet) return;
                                 String status = order["status"];
+                                if (!context.mounted) return;
 
                                 if (status == "Pending") {
                                   status = "Shipped";

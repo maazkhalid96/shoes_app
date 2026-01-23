@@ -30,9 +30,9 @@ class _AddProductState extends State<AddProduct> {
     if (!mounted) return;
 
     if (picked == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No image selected")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("No image selected")));
       return;
     }
 
@@ -58,11 +58,12 @@ class _AddProductState extends State<AddProduct> {
 
     try {
       String? imageUrl = await CloudinaryService.uploadImage(imageFilee!);
+      if (!mounted) return;
       if (imageUrl == null) {
         setState(() => isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Image upload failed")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Image upload failed")));
         return;
       }
 
@@ -74,10 +75,11 @@ class _AddProductState extends State<AddProduct> {
         "image": imageUrl,
         "createdAt": DateTime.now(),
       });
+      if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Product added successfully!")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Product added successfully!")));
 
       // Clear fields
       getController.productName.clear();
@@ -90,10 +92,11 @@ class _AddProductState extends State<AddProduct> {
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     }
   }
 
@@ -144,10 +147,7 @@ class _AddProductState extends State<AddProduct> {
                 hintText: "Select Category",
               ),
               items: categories
-                  .map((cat) => DropdownMenuItem(
-                        value: cat,
-                        child: Text(cat),
-                      ))
+                  .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -173,8 +173,9 @@ class _AddProductState extends State<AddProduct> {
                 child: CircleAvatar(
                   radius: 65,
                   backgroundColor: Colors.blue.shade200,
-                  backgroundImage:
-                      imageFilee != null ? FileImage(imageFilee!) : null,
+                  backgroundImage: imageFilee != null
+                      ? FileImage(imageFilee!)
+                      : null,
                   child: imageFilee == null
                       ? Icon(Icons.camera_alt, size: 40, color: Colors.white)
                       : null,

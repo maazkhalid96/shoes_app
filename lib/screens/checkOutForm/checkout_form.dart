@@ -299,6 +299,7 @@ class _CheckoutFormState extends State<CheckoutForm> {
               onPressed: () async {
                 //// check internet connection
                 bool hasInternet = await checkInternet(context);
+                if (!context.mounted) return;
                 if (!hasInternet) return;
                 if (nameController.text.isEmpty ||
                     phoneController.text.isEmpty ||
