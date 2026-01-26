@@ -50,6 +50,7 @@ dependencies:
   connectivity_plus: ^4.0.1
   # images loading se pehle shimmer
   shimmer: ^3.0.0
+  firebase_messaging: ^16.1.1
 
 
 dev_dependencies:
@@ -62,7 +63,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/icon2.png"
+  image_path: "assets/images/icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
