@@ -109,6 +109,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
                 Text(
                   "Rs.${widget.product["price"]}",
+                  
                   style: const TextStyle(
                     fontSize: 22,
                     color: Colors.green,
